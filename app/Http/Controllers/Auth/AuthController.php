@@ -4,46 +4,26 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\UserLoginRequest;
+use App\Http\Requests\Auth\UserRegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponderTrait;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use PDOException;
 
 class AuthController extends Controller
 {
     use ApiResponderTrait;
 
-    public function register(Request $request)
+    public function register(UserRegisterRequest $request)
     {
-        $request->validate([
-            "name" => "required|string",
-            "email" => "required|email|string",
-            "password" => "required|string",
-        ]);
-        try {
-            $user = User::create([
-                "name" => $request->name,
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
-            ]);
-            return $this->success(new UserResource($user), "Success", 201);
-        } catch (\Throwable $th) {
-            if ($th instanceof PDOException && $th->getCode() == "23000") {
-                return $this->error("Email {$request->email} already used", 400);
-            }
-            return $this->error($th->getMessage(), 400);
-        }
+        $payload = $request->validated();
+        $user = User::create($payload);
+        return $this->success(new UserResource($user), "Success", 201);
     }
-    public function login(Request $request)
+    public function login(UserLoginRequest $request)
     {
-        $request->validate([
-            "email" => "required|email|string",
-            "password" => "required|string",
-        ]);
-        $credentials = request(['email', 'password']);
-        $user = User::where('email', request('email'))->first();
+        $credentials = $request->validated();
+        $user = User::where('email', $credentials["email"])->first();
         if (! $token = Auth::claims($user->toArray())->attempt($credentials)) {
             return $this->error('Unautorized', 401, null);
         }
@@ -70,17 +50,13 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        try {
-            $token = Auth::refresh();
-            return $this->success([
-                "token" => $token,
-                "expiresIn" => now()
-                    ->addMinutes(Auth::factory()->getTTL())
-                    ->setTimezone(config("app.timezone"))
-                    ->format('D, d M Y H:i:s') . ' ' . config("app.timezone")
-            ]);
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage(), 401, null);
-        }
+        $token = Auth::refresh();
+        return $this->success([
+            "token" => $token,
+            "expiresIn" => now()
+                ->addMinutes(Auth::factory()->getTTL())
+                ->setTimezone(config("app.timezone"))
+                ->format('D, d M Y H:i:s') . ' ' . config("app.timezone")
+        ]);
     }
 }
