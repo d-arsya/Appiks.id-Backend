@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('title');
             $table->string('question');
             $table->json('answers');
-            $table->enum('type', ['safe', 'unsafe', 'help']);
+            $table->enum('type', ['safe', 'unsafe']);
             $table->timestamps();
         });
         Schema::create('questionnaire_answers', function (Blueprint $table) {
             $table->id();
             $table->json('answers');
-            $table->foreignIdFor(Questionnaire::class)->nullable()->constrained()->nullOnDelete();
+            $table->enum('type', ['safe', 'unsafe', 'help']);
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });

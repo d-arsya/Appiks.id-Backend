@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Room;
 use App\Models\School;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,8 +20,9 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('identifier');
             $table->string('password');
-            $table->boolean('verified');
+            $table->boolean('verified')->default(false);
             $table->enum('role', ['super', 'admin', 'teacher', 'student', 'conselor', 'headteacher']);
+            $table->foreignIdFor(Room::class)->constrained()->onDelete('cascade')->nullable();
             $table->foreignIdFor(School::class)->constrained()->onDelete('cascade')->nullable();
             $table->timestamps();
         });

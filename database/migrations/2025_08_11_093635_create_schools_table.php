@@ -19,6 +19,12 @@ return new class extends Migration
             $table->string('address');
             $table->timestamps();
         });
+        Schema::create('rooms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -27,5 +33,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('schools');
+        Schema::dropIfExists('rooms');
     }
 };
