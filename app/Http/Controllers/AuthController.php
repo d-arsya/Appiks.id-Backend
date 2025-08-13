@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -14,12 +14,9 @@ class AuthController extends Controller
 {
     use ApiResponderTrait;
 
-    public function register(UserRegisterRequest $request)
-    {
-        $payload = $request->validated();
-        $user = User::create($payload);
-        return $this->success(new UserResource($user), "Success", 201);
-    }
+    /**
+     * Get JWT token for authentication.
+     */
     public function login(UserLoginRequest $request)
     {
         $credentials = $request->validated();
@@ -36,18 +33,27 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Get the autheticated user profile.
+     */
     public function me()
     {
         $user = Auth::user();
         return $this->success(new UserResource($user));
     }
 
+    /**
+     * Invalidate the JWT.
+     */
     public function logout()
     {
         Auth::logout(true);
         return $this->success(null, 'Success logout');
     }
 
+    /**
+     * Get JWT refreshed token.
+     */
     public function refresh()
     {
         $token = Auth::refresh();

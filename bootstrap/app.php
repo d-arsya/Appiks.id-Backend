@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\GateRequest;
+use App\Exceptions\NotFound;
 use App\Exceptions\UniqueValueContraint;
 use App\Exceptions\ValidationError;
 use App\Http\Middleware\JwtTokenExistMiddleware;
@@ -21,6 +23,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->renderable(new NotFound());
+        $exceptions->renderable(new GateRequest());
         $exceptions->renderable(new UniqueValueContraint());
         $exceptions->renderable(new ValidationError());
     })->create();
