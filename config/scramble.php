@@ -86,7 +86,28 @@ return [
      * ],
      * ```
      */
-    'servers' => null,
+    'servers' => [
+        "Normal"                => "api",
+        "Super"       => "api/-/super@super.com",
+        "Admin 1"     => "api/-/admin@school1.com",
+        "Admin 2"     => "api/-/admin@school2.com",
+        "Conselor 1"  => "api/-/conselor@school1.com",
+        "Conselor 2"  => "api/-/conselor@school2.com",
+        "Headteacher 1" => "api/-/headteacher@school1.com",
+        "Headteacher 2" => "api/-/headteacher@school2.com",
+        "Teacher 1"     => "api/-/teacher@room1.com",
+        "Teacher 2"     => "api/-/teacher@room2.com",
+        "Teacher 3"     => "api/-/teacher@room3.com",
+        "Teacher 4"     => "api/-/teacher@room4.com",
+        "student1@room1.com"    => "api/-/student1@room1.com",
+        "student2@room1.com"    => "api/-/student2@room1.com",
+        "student1@room2.com"    => "api/-/student1@room2.com",
+        "student2@room2.com"    => "api/-/student2@room2.com",
+        "student1@room3.com"    => "api/-/student1@room3.com",
+        "student2@room3.com"    => "api/-/student2@room3.com",
+        "student1@room4.com"    => "api/-/student1@room4.com",
+        "student2@room4.com"    => "api/-/student2@room4.com",
+    ],
 
     /**
      * Determines how Scramble stores the descriptions of enum cases.

@@ -4,6 +4,7 @@ use App\Exceptions\GateRequest;
 use App\Exceptions\NotFound;
 use App\Exceptions\UniqueValueContraint;
 use App\Exceptions\ValidationError;
+use App\Http\Middleware\AutoLoginMiddleware;
 use App\Http\Middleware\JwtTokenExistMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'jwt' => JwtTokenExistMiddleware::class
+            'jwt' => JwtTokenExistMiddleware::class,
+            'autologin' => AutoLoginMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

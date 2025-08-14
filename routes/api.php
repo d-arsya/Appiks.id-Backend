@@ -1,36 +1,50 @@
 <?php
 
-use App\Http\Controllers\AnomalyController;
-use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MeetController;
-use App\Http\Controllers\MoodRecordController;
-use App\Http\Controllers\QuestionnaireAnswerController;
-use App\Http\Controllers\QuestionnaireController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\SchoolController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
+
+include "register.php";
+
 
 Route::get('/', function () {
     return response()->json("OK");
 });
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('jwt')->group(function () {
-    Route::get('me', [AuthController::class, 'me']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
+    register();
+    if (app()->environment('local')) {
+        $emails = [
+            "super",
+            "admin",
+            "teacher",
+            "headteacher",
+            "student",
+            "conselor",
+            "super@super.com",
+            "admin@school1.com",
+            "admin@school2.com",
+            "conselor@school1.com",
+            "conselor@school2.com",
+            "headteacher@school1.com",
+            "headteacher@school2.com",
+            "teacher@room1.com",
+            "teacher@room2.com",
+            "teacher@room3.com",
+            "teacher@room4.com",
+            "student1@room1.com",
+            "student2@room1.com",
+            "student1@room2.com",
+            "student2@room2.com",
+            "student1@room3.com",
+            "student2@room3.com",
+            "student1@room4.com",
+            "student2@room4.com",
+        ];
+
+        foreach ($emails as $email) {
+            Route::prefix("-/{$email}")->group(function () {
+                register(); // your reusable route function
+            });
+        }
+    }
 });
-Route::apiResource('user', UserController::class);
-Route::apiResource('school', SchoolController::class);
-Route::apiResource('room', RoomController::class);
-Route::apiResource('article', ArticleController::class);
-Route::apiResource('video', VideoController::class);
-Route::apiResource('mood_records', MoodRecordController::class);
-Route::apiResource('anomaly', AnomalyController::class);
-Route::apiResource('schedule', ScheduleController::class);
-Route::apiResource('meet', MeetController::class);
-Route::apiResource('questionnaire', QuestionnaireController::class);
-Route::apiResource('answer', QuestionnaireAnswerController::class);
