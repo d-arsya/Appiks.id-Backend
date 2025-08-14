@@ -6,11 +6,17 @@ use App\Http\Requests\CreateSchoolRequest;
 use App\Http\Resources\SchoolResource;
 use App\Models\School;
 use App\Traits\ApiResponderTrait;
-use Http\Discovery\Exception\NotFoundException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class SchoolController extends Controller
 {
-    use ApiResponderTrait;
+    use ApiResponderTrait, AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(School::class, 'school');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,24 +37,16 @@ class SchoolController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(School $school)
     {
-        $school = School::find($id);
-        if (!$school) {
-            throw new NotFoundException();
-        }
         return $this->success($school);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateSchoolRequest $request, string $id)
+    public function update(CreateSchoolRequest $request, School $school)
     {
-        $school = School::find($id);
-        if (!$school) {
-            throw new NotFoundException();
-        }
         $school->update($request->validated());
         return $this->success($school);
     }
@@ -56,12 +54,8 @@ class SchoolController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(School $school)
     {
-        $school = School::find($id);
-        if (!$school) {
-            throw new NotFoundException();
-        }
         $school->delete();
         return $this->success(null);
     }

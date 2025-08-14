@@ -11,7 +11,7 @@ class CreateVideoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->school_id == $this->input('school_id');
     }
 
     protected function prepareForValidation(): void

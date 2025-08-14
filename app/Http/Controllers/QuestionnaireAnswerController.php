@@ -8,16 +8,24 @@ use App\Models\Questionnaire;
 use App\Models\QuestionnaireAnswer;
 use App\Traits\ApiResponderTrait;
 use Http\Discovery\Exception\NotFoundException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionnaireAnswerController extends Controller
 {
-    use ApiResponderTrait;
+    use ApiResponderTrait, AuthorizesRequests;
+    public function __construct()
+    {
+        $this->authorizeResource(QuestionnaireAnswer::class, 'questionnaireAnswer');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return $this->success(QuestionnaireAnswerResource::collection(QuestionnaireAnswer::all()));
+        $answers = Auth::user()->room->students->pluck('id');
+
+        return $this->success(QuestionnaireAnswerResource::collection(QuestionnaireAnswer::whereIn('user_id', $answers)->get()));
     }
 
     /**
@@ -27,6 +35,7 @@ class QuestionnaireAnswerController extends Controller
     public function store(CreateQuestionnaireAnswerRequest $request)
     {
         $data = $request->validated();
+        $data["user_id"] = Auth::user()->id;
 
         if ($data['type'] === 'help') {
             $data['answers'] = [$data['answers']];
@@ -55,38 +64,8 @@ class QuestionnaireAnswerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(QuestionnaireAnswer $answer)
     {
-        $answer = QuestionnaireAnswer::find($id);
-        if (!$answer) {
-            throw new NotFoundException();
-        }
         return $this->success($answer);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(CreateQuestionnaireAnswerRequest $request, string $id)
-    {
-        $answer = QuestionnaireAnswer::find($id);
-        if (!$answer) {
-            throw new NotFoundException();
-        }
-        $answer->update($request->validated());
-        return $this->success($answer);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $answer = QuestionnaireAnswer::find($id);
-        if (!$answer) {
-            throw new NotFoundException();
-        }
-        $answer->delete();
-        return $this->success(null);
     }
 }

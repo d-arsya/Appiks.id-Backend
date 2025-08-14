@@ -7,16 +7,24 @@ use App\Http\Resources\VideoResource;
 use App\Models\Video;
 use App\Traits\ApiResponderTrait;
 use Http\Discovery\Exception\NotFoundException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
-    use ApiResponderTrait;
+    use ApiResponderTrait, AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(Video::class, 'video');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return $this->success(VideoResource::collection(Video::all()));
+        $videos = Auth::user()->school->videos;
+        return $this->success(VideoResource::collection($videos));
     }
 
     /**
@@ -31,24 +39,16 @@ class VideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Video $video)
     {
-        $video = Video::find($id);
-        if (!$video) {
-            throw new NotFoundException();
-        }
         return $this->success($video);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateVideoRequest $request, string $id)
+    public function update(CreateVideoRequest $request, Video $video)
     {
-        $video = Video::find($id);
-        if (!$video) {
-            throw new NotFoundException();
-        }
         $video->update($request->validated());
         return $this->success($video);
     }
@@ -56,12 +56,8 @@ class VideoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Video $video)
     {
-        $video = Video::find($id);
-        if (!$video) {
-            throw new NotFoundException();
-        }
         $video->delete();
         return $this->success(null);
     }

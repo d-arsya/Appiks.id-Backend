@@ -26,8 +26,8 @@ function register()
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::apiResource('anomaly', AnomalyController::class)->except(['destroy']);
     Route::apiResource('user', UserController::class);
-    Route::apiResource('schedule', ScheduleController::class);
+    Route::apiResource('schedule', ScheduleController::class)->only(['index', 'update']);
     Route::apiResource('meet', MeetController::class);
-    Route::apiResource('questionnaire', QuestionnaireController::class);
-    Route::apiResource('answer', QuestionnaireAnswerController::class);
+    Route::apiResource('questionnaire', QuestionnaireController::class)->only(['index', 'show']);
+    Route::apiResource('answer', QuestionnaireAnswerController::class)->only(['index', 'show', 'store']);
 }

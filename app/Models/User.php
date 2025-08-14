@@ -72,4 +72,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Meet::class, 'teacher_id', 'id');
     }
+    public function anomalies()
+    {
+        return $this->hasMany(Anomaly::class);
+    }
 }

@@ -6,17 +6,24 @@ use App\Http\Requests\CreateMoodRecordRequest;
 use App\Http\Resources\MoodRecordResource;
 use App\Models\MoodRecord;
 use App\Traits\ApiResponderTrait;
-use Http\Discovery\Exception\NotFoundException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class MoodRecordController extends Controller
 {
-    use ApiResponderTrait;
+    use ApiResponderTrait, AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(MoodRecord::class, 'mood_record');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return $this->success(MoodRecordResource::collection(MoodRecord::all()));
+        $records = Auth::user()->moodRecords;
+        return $this->success(MoodRecordResource::collection($records));
     }
 
     /**
@@ -24,45 +31,35 @@ class MoodRecordController extends Controller
      */
     public function store(CreateMoodRecordRequest $request)
     {
-        $record = MoodRecord::create($request->validated());
-        return $this->success(new MoodRecordResource($record), 'Success', 201);
+        $payload = $request->validated();
+        $payload["user_id"] = Auth::user()->id;
+        $moodRecord = MoodRecord::create($payload);
+        return $this->success(new MoodRecordResource($moodRecord), 'Success', 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(MoodRecord $moodRecord)
     {
-        $record = MoodRecord::find($id);
-        if (!$record) {
-            throw new NotFoundException();
-        }
-        return $this->success($record);
+        return $this->success($moodRecord);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateMoodRecordRequest $request, string $id)
+    public function update(CreateMoodRecordRequest $request, MoodRecord $moodRecord)
     {
-        $record = MoodRecord::find($id);
-        if (!$record) {
-            throw new NotFoundException();
-        }
-        $record->update($request->validated());
-        return $this->success($record);
+        $moodRecord->update($request->validated());
+        return $this->success($moodRecord);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(MoodRecord $moodRecord)
     {
-        $record = MoodRecord::find($id);
-        if (!$record) {
-            throw new NotFoundException();
-        }
-        $record->delete();
+        $moodRecord->delete();
         return $this->success(null);
     }
 }

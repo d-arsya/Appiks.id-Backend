@@ -24,7 +24,6 @@ class CreateQuestionnaireAnswerRequest extends FormRequest
         return [
             'answers'          => 'required|string',
             'type'             => 'required|in:safe,unsafe,help',
-            'user_id'          => 'required|exists:users,id',
             'questionnaire_id' => [
                 'nullable',
                 'required_unless:type,help',

@@ -13,7 +13,6 @@ class CreateMoodRecordRequest extends FormRequest
     {
         return true;
     }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,9 +22,7 @@ class CreateMoodRecordRequest extends FormRequest
     {
         return [
             'type' => 'required|in:netral,happy,sad,angry',
-            'date' => 'nullable|date',
-            'user_id' => 'required|exists:users,id',
-            'mood_status_id' => 'nullable|exists:mood_statuses,id',
+            'date' => 'nullable|date'
         ];
     }
 }

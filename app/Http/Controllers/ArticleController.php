@@ -6,17 +6,24 @@ use App\Http\Requests\CreateArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Traits\ApiResponderTrait;
-use Http\Discovery\Exception\NotFoundException;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
-    use ApiResponderTrait;
+    use ApiResponderTrait, AuthorizesRequests;
+
+    public function __construct()
+    {
+        $this->authorizeResource(Article::class, 'article');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return $this->success(ArticleResource::collection(Article::all()));
+        $articles = Auth::user()->school->articles;
+        return $this->success(ArticleResource::collection($articles));
     }
 
     /**
@@ -31,24 +38,16 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Article $article)
     {
-        $article = Article::find($id);
-        if (!$article) {
-            throw new NotFoundException();
-        }
         return $this->success($article);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(CreateArticleRequest $request, string $id)
+    public function update(CreateArticleRequest $request, Article $article)
     {
-        $article = Article::find($id);
-        if (!$article) {
-            throw new NotFoundException();
-        }
         $article->update($request->validated());
         return $this->success($article);
     }
@@ -56,12 +55,8 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Article $article)
     {
-        $article = Article::find($id);
-        if (!$article) {
-            throw new NotFoundException();
-        }
         $article->delete();
         return $this->success(null);
     }

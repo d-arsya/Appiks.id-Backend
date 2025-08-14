@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateAnomalyRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class CreateAnomalyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::user()->role == 'student';
     }
 
     /**
@@ -23,9 +24,7 @@ class CreateAnomalyRequest extends FormRequest
     {
         return [
             'description' => 'required|string|max:255',
-            'handled'     => 'boolean',
-            'method'      => 'nullable|in:meet,chat',
-            'user_id'     => 'required|exists:users,id',
+            'method'      => 'nullable|in:meet,chat'
         ];
     }
 }
