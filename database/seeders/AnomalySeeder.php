@@ -14,7 +14,7 @@ class AnomalySeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::inRandomOrder()->where('role', 'student')->take(10)->get();
+        $users = User::inRandomOrder()->where('role', 'student')->take(4)->get();
         foreach ($users as $item) {
             Anomaly::factory(2)->create(["user_id" => $item->id]);
         }

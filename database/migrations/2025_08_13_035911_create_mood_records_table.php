@@ -19,6 +19,9 @@ return new class extends Migration
             $table->date('end');
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->unique(['user_id', 'start']);
+            $table->unique(['user_id', 'end']);
+            $table->unique(['user_id', 'start', 'end']);
         });
         Schema::create('mood_records', function (Blueprint $table) {
             $table->id();
@@ -27,6 +30,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(MoodStatus::class)->nullable()->constrained()->onDelete('restrict');
             $table->timestamps();
+            $table->unique(['user_id', 'date']);
         });
     }
 

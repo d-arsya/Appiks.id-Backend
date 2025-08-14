@@ -15,7 +15,7 @@ class MoodSeeder extends Seeder
     {
         $users = User::inRandomOrder()
             ->where('role', 'student')
-            ->take(5)
+            ->take(4)
             ->get();
 
         $weeksToGenerate = 2; // e.g., 2 weeks of data

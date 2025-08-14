@@ -16,7 +16,7 @@ class ArticleSeeder extends Seeder
     {
         $schools = School::all();
         foreach ($schools as $item) {
-            Article::factory(3)->create(["school_id" => $item->id]);
+            Article::factory(2)->create(["school_id" => $item->id]);
         }
     }
 }
