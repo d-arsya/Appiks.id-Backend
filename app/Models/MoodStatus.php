@@ -7,6 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class MoodStatus extends Model
 {
-    /** @use HasFactory<\Database\Factories\MoodStatusFactory> */
     use HasFactory;
+    protected $guarded = [];
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function moodRecords()
+    {
+
+        return $this->hasMany(MoodRecord::class);
+    }
 }

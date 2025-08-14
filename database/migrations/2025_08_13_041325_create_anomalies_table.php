@@ -32,8 +32,8 @@ return new class extends Migration
             $table->date('day');
             $table->boolean('ended')->default(false);
             $table->foreignIdFor(Anomaly::class)->constrained()->onDelete('cascade');
-            $table->foreignIdFor(User::class, 'teacher')->constrained()->onDelete('cascade');
-            $table->foreignIdFor(User::class, 'student')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'teacher_id')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'student_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

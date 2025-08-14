@@ -18,7 +18,7 @@ class MeetSeeder extends Seeder
         $anomalies = Anomaly::inRandomOrder()->take(5)->get();
         $teachers = User::where('role', 'conselor')->get('id');
         foreach ($anomalies as $item) {
-            Meet::factory()->create(["anomaly_id" => $item->id, "student" => $item->user_id, "teacher" => fake()->randomElement($teachers)]);
+            Meet::factory()->create(["anomaly_id" => $item->id, "student_id" => $item->user_id, "teacher_id" => fake()->randomElement($teachers)]);
         }
     }
 }

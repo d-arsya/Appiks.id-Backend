@@ -12,4 +12,9 @@ class Video extends Model
     protected $casts = [
         'tags' => 'array',
     ];
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
 }

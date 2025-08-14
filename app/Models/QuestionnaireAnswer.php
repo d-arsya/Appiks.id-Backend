@@ -11,4 +11,9 @@ class QuestionnaireAnswer extends Model
     use HasFactory;
     protected $guarded = [];
     protected $casts = ["answers" => "array"];
+
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

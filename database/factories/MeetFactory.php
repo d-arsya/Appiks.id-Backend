@@ -20,8 +20,8 @@ class MeetFactory extends Factory
             "day" => fake()->date(),
             "ended" => fake()->boolean(),
             "anomaly_id" => fake()->randomNumber(),
-            "teacher" => fake()->randomNumber(),
-            "student" => fake()->randomNumber(),
+            "teacher_id" => fake()->randomNumber(),
+            "student_id" => fake()->randomNumber(),
         ];
     }
 }

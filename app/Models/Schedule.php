@@ -12,4 +12,9 @@ class Schedule extends Model
     protected $casts = [
         'days' => 'array',
     ];
+
+    public function conselor()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }
