@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('verified')->default(false);
             $table->enum('role', ['super', 'admin', 'teacher', 'student', 'conselor', 'headteacher']);
-            $table->foreignIdFor(Room::class)->constrained()->onDelete('cascade')->nullable();
-            $table->foreignIdFor(School::class)->constrained()->onDelete('cascade')->nullable();
+            $table->foreignIdFor(Room::class)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(School::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

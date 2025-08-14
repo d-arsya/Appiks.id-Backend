@@ -44,5 +44,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('anomalies');
+        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('meets');
     }
 };

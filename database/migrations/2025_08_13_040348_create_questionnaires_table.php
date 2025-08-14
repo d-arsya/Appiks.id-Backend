@@ -23,6 +23,8 @@ return new class extends Migration
         });
         Schema::create('questionnaire_answers', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
+            $table->string('question')->nullable();
             $table->json('answers');
             $table->enum('type', ['safe', 'unsafe', 'help']);
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
