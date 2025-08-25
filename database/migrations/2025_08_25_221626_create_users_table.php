@@ -1,0 +1,40 @@
+<?php
+
+use App\Models\Room;
+use App\Models\School;
+use App\Models\User;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('phone')->unique()->nullable();
+            $table->string('username')->unique();
+            $table->string('identifier')->unique();
+            $table->string('password');
+            $table->boolean('verified')->default(false);
+            $table->enum('role', ['super', 'admin', 'teacher', 'student', 'conselor', 'headteacher']);
+            $table->foreignIdFor(User::class, 'mentor_id')->nullable()->constrained()->onDelete('restrict');
+            $table->foreignIdFor(Room::class)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(School::class)->nullable()->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('users');
+    }
+};
