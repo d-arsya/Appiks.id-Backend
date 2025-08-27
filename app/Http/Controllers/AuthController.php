@@ -31,7 +31,7 @@ class AuthController extends Controller
             "expiresIn" => now()
                 ->addMinutes(Auth::factory()->getTTL())
                 ->setTimezone(config("app.timezone"))
-                ->format('D, d M Y H:i:s') . ' ' . config("app.timezone")
+                ->toIso8601String()
         ]);
     }
 
@@ -65,7 +65,7 @@ class AuthController extends Controller
             "expiresIn" => now()
                 ->addMinutes(Auth::factory()->getTTL())
                 ->setTimezone(config("app.timezone"))
-                ->format('D, d M Y H:i:s') . ' ' . config("app.timezone")
+                ->toIso8601String()
         ]);
     }
 
