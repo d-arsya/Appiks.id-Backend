@@ -12,6 +12,14 @@ trait ApiResponder
             'data'    => $data
         ], $status);
     }
+    protected function created($data, $message = 'Success')
+    {
+        return response()->json([
+            'success'  => true,
+            'message' => $message,
+            'data'    => $data
+        ], 201);
+    }
 
     protected function error($message, $status = 400, $errors = [])
     {

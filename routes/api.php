@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +15,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::patch('profile', [UserController::class, 'profile']);
+    Route::get('mood_record/check', [MoodRecordController::class, 'check']);
+    Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
 });

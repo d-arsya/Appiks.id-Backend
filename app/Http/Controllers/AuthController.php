@@ -9,21 +9,29 @@ use App\Http\Requests\UserLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponder;
+use Dedoc\Scramble\Attributes\Group;
 
 class AuthController extends Controller
 {
     use ApiResponder;
     /**
-     * Get JWT token for authentication.
+     * Get JWT token(login)
      */
+    #[Group('Authentication')]
     public function login(UserLoginRequest $request)
     {
         $credentials = $request->validated();
-        $user = User::where('username', $credentials["username"])->first();
+        $user = User::with(['school', 'room', 'mentor'])->where('username', $credentials["username"])->first();
         if (! $user) {
             return $this->error('Unauthorized', 401, null);
         }
-        if (! $token = Auth::claims(['username' => $user->username, 'verified' => $user->verified])->attempt($credentials)) {
+        if (! $token = Auth::claims([
+            'username' => $user->username,
+            'verified' => $user->verified,
+            'room' => $user->room->name,
+            'mentor' => $user->mentor->name,
+            'school' => $user->school->name
+        ])->attempt($credentials)) {
             return $this->error('Unauthorized', 401, null);
         }
         return $this->success([
@@ -36,8 +44,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Get the autheticated user profile.
+     * Get the autheticated user profile
      */
+    #[Group('User')]
     public function me()
     {
         $user = Auth::user();
@@ -46,8 +55,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Invalidate the JWT.
+     * Invalidate the JWT (logout)
      */
+    #[Group('Authentication')]
     public function logout()
     {
         Auth::logout(true);
@@ -55,8 +65,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Get JWT refreshed token.
+     * Get JWT refreshed token
      */
+    #[Group('Authentication')]
     public function refresh()
     {
         $token = Auth::refresh();
@@ -69,6 +80,10 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Is username used
+     */
+    #[Group('User')]
     public function checkUsername(CheckUsernameRequest $request)
     {
         return $this->success(["username" => true], "Username not exist");

@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Models\MoodRecord;
 use App\Traits\ApiResponder;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
-class UserFirstLoginRequest extends FormRequest
+class MoodRecordSendRequest extends FormRequest
 {
     use ApiResponder;
     /**
@@ -15,15 +17,18 @@ class UserFirstLoginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return !Auth::user()->verified;
+        $user = Auth::user()->role == 'student';
+        $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->get()->count() == 0;
+        return $user && $mood;
     }
 
     protected function failedAuthorization()
     {
         throw new HttpResponseException(
-            $this->error('Kamu sudah merubah profile', 403)
+            $this->error('Kamu sudah merekam mood hari ini', 403)
         );
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -32,13 +37,12 @@ class UserFirstLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "username" => "required|unique:users,username," . Auth::user()->id . "|string",
-            "phone" => "required|unique:users,phone," . Auth::user()->id . "|regex:/^[0-9]{10,15}$/",
+            "status" => "required|string|in:happy,sad,angry,netral"
         ];
     }
 
-    protected function prepareForValidation()
+    protected function passedValidation()
     {
-        $this->merge(["verified" => true]);
+        $this->merge(["user_id" => Auth::id(), 'recorded' => Carbon::today()]);
     }
 }
