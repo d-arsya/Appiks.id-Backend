@@ -6,6 +6,7 @@ use App\Traits\ApiResponder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserFirstLoginRequest extends FormRequest
 {
@@ -32,13 +33,22 @@ class UserFirstLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[a-z]/',      // Must contain at least one lowercase letter
+                'regex:/[A-Z]/',      // Must contain at least one uppercase letter
+                'regex:/[0-9]/',      // Must contain at least one digit
+                'regex:/[@$!%*#?&]/' // Must contain at least one special character
+            ],
             "username" => "required|unique:users,username," . Auth::user()->id . "|string",
             "phone" => "required|unique:users,phone," . Auth::user()->id . "|regex:/^[0-9]{10,15}$/",
         ];
     }
 
-    protected function prepareForValidation()
+    protected function passedValidation()
     {
-        $this->merge(["verified" => true]);
+        $this->merge(["verified" => true, "password" => Hash::make($this->password)]);
     }
 }

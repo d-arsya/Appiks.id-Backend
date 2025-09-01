@@ -28,6 +28,7 @@ class AuthController extends Controller
         if (! $token = Auth::claims([
             'name' => $user->name,
             'username' => $user->username,
+            'role' => $user->role,
             'verified' => $user->verified,
             'room' => $user->room->name,
             'mentor' => $user->mentor->name,
