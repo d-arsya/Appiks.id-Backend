@@ -19,5 +19,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('mood_record/check', [MoodRecordController::class, 'check']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
 });
+Route::get('questionnaire/tes', [QuestionnaireController::class, 'tes']);
+Route::get('questionnaire/her', [QuestionnaireController::class, 'her']);
+Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);
 Route::get('questionnaire/{type}', [QuestionnaireController::class, 'getAllQuestionnaires']);
 Route::get('questionnaire/{type}/{order}', [QuestionnaireController::class, 'getOneQuestionnaire']);
