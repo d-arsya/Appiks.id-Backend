@@ -23,6 +23,15 @@ class UserSeeder extends Seeder
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
+            "username" => "11111",
+            "identifier" => "11111",
+            "verified" => true,
+            "role" => "admin",
+            "mentor_id" => null,
+            "room_id" => null,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
             "username" => "0000000000",
             "identifier" => "0000000000",
             "verified" => false,

@@ -37,10 +37,9 @@ class UserFirstLoginRequest extends FormRequest
                 'required',
                 'string',
                 'min:8',
-                'regex:/[a-z]/',      // Must contain at least one lowercase letter
-                'regex:/[A-Z]/',      // Must contain at least one uppercase letter
-                'regex:/[0-9]/',      // Must contain at least one digit
-                'regex:/[@$!%*#?&]/' // Must contain at least one special character
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/'
             ],
             "username" => "required|unique:users,username," . Auth::user()->id . "|string",
             "phone" => "required|unique:users,phone," . Auth::user()->id . "|regex:/^[0-9]{10,15}$/",

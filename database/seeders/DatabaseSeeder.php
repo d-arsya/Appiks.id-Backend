@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             SchoolSeeder::class,
             RoomSeeder::class,
             UserSeeder::class,
-            QuestionnaireSeeder::class
+            QuestionnaireSeeder::class,
+            TagSeeder::class
         ]);
     }
 }

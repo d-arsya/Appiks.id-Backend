@@ -28,10 +28,11 @@ class AuthController extends Controller
         if (! $token = Auth::claims([
             'name' => $user->name,
             'username' => $user->username,
+            'identifier' => $user->identifier,
             'role' => $user->role,
             'verified' => $user->verified,
-            'room' => $user->room->name,
-            'mentor' => $user->mentor->name,
+            'room' => $user->room->name ?? null,
+            'mentor' => $user->mentor->name ?? null,
             'school' => $user->school->name
         ])->attempt($credentials)) {
             return $this->error('Unauthorized', 401, null);

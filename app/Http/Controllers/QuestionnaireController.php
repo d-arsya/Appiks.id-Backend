@@ -39,9 +39,10 @@ class QuestionnaireController extends Controller
         return $this->success(new QuestionnaireResource($questionnaire));
     }
     /**
-     * Get questionnaire by type and order
+     * Analyze questionnaire answer
      * @param string $type secure | insecure.
      */
+    #[Group('Questionnaire')]
     public function analyzeQuestionnaire(AnalyzeQuestionnaireRequest $request, string $type)
     {
         request()->validate([

@@ -36,4 +36,8 @@ class School extends Model
     {
         return $this->hasMany(User::class)->where('role', 'student');
     }
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
+    }
 }
