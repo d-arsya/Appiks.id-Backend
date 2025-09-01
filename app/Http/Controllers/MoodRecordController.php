@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MoodRecordSendRequest;
+use App\Http\Resources\MoodRecordResource;
 use App\Models\MoodRecord;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
@@ -21,6 +22,19 @@ class MoodRecordController extends Controller
     {
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->get();
         return $this->success(["can" => $mood->count() == 0]);
+    }
+    /**
+     * Get user mood recaps by month
+     * @param string $month YYYY-MM ex. 2025-09
+     */
+    #[Group('Mood Record')]
+    public function recapPerMonth(string $month)
+    {
+        request()->validate([
+            'month' => ['required', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
+        ]);
+        $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', 'like', "$month-__")->get();
+        return $this->success(MoodRecordResource::collection($mood));
     }
 
     /**

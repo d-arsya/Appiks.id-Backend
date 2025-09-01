@@ -19,7 +19,8 @@ class RoomFactory extends Factory
         $name = "Kelas " . fake()->numberBetween(1, 6) . " " . fake()->randomElement(["A", "B", "C", "D"]);
         return [
             "name" => $name,
-            "school_id" => fake()->randomNumber()
+            "school_id" => fake()->randomNumber(),
+            "code" => fake()->lexify("??????????")
         ];
     }
 }

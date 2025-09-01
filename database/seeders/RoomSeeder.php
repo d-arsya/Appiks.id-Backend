@@ -15,6 +15,6 @@ class RoomSeeder extends Seeder
     public function run(): void
     {
         $school = School::first();
-        Room::factory()->create(["school_id" => $school->id]);
+        Room::factory()->create(["school_id" => $school->id, "code" => "9999999999"]);
     }
 }
