@@ -26,6 +26,7 @@ class AuthController extends Controller
             return $this->error('Unauthorized', 401, null);
         }
         if (! $token = Auth::claims([
+            'name' => $user->name,
             'username' => $user->username,
             'verified' => $user->verified,
             'room' => $user->room->name,
