@@ -16,8 +16,37 @@ class UserSeeder extends Seeder
     {
         $room = Room::first();
         $mentor = User::factory()->create([
+            "username" => "33333",
+            "identifier" => "33333",
             "verified" => true,
             "role" => "teacher",
+            "mentor_id" => null,
+            "room_id" => null,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
+            "username" => "55555",
+            "identifier" => "55555",
+            "verified" => true,
+            "role" => "super",
+            "mentor_id" => null,
+            "room_id" => null,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
+            "username" => "44444",
+            "identifier" => "44444",
+            "verified" => true,
+            "role" => "headteacher",
+            "mentor_id" => null,
+            "room_id" => null,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
+            "username" => "22222",
+            "identifier" => "22222",
+            "verified" => true,
+            "role" => "conselor",
             "mentor_id" => null,
             "room_id" => null,
             "school_id" => $room->school_id
@@ -32,10 +61,28 @@ class UserSeeder extends Seeder
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
+            "username" => "00000",
+            "identifier" => "00000",
+            "verified" => true,
+            "role" => "student",
+            "mentor_id" => $mentor->id,
+            "room_id" => $room->id,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
             "username" => "0000000000",
             "identifier" => "0000000000",
             "verified" => false,
             "role" => "student",
+            "mentor_id" => $mentor->id,
+            "room_id" => $room->id,
+            "school_id" => $room->school_id
+        ]);
+        User::factory()->create([
+            "username" => "1111111111",
+            "identifier" => "1111111111",
+            "verified" => false,
+            "role" => "admin",
             "mentor_id" => $mentor->id,
             "room_id" => $room->id,
             "school_id" => $room->school_id
