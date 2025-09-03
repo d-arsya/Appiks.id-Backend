@@ -18,8 +18,7 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             UserSeeder::class,
             QuestionnaireSeeder::class,
-            TagSeeder::class,
-            SharingSeeder::class
+            TagSeeder::class
         ]);
     }
 }

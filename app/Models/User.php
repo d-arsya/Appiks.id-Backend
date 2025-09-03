@@ -40,6 +40,11 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function mood()
+    {
+        return $this->hasMany(MoodRecord::class);
+    }
+
     public function room()
     {
         return $this->belongsTo(Room::class);
@@ -68,5 +73,15 @@ class User extends Authenticatable implements JWTSubject
     public function sharing()
     {
         return $this->hasMany(Sharing::class);
+    }
+
+    public function report()
+    {
+        return $this->hasMany(Report::class);
+    }
+
+    public function lastmood()
+    {
+        return $this->mood()->latest('recorded')->first()->status;
     }
 }

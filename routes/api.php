@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -35,6 +36,14 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
         Route::post('sharing', 'store');
         Route::get('sharing', 'index');
+    });
+    Route::controller(ReportController::class)->group(function () {
+        Route::patch('report/confirm/{report}', 'confirm');
+        Route::patch('report/close/{report}', 'close');
+        Route::patch('report/cancel/{report}', 'cancel');
+        Route::post('report', 'store');
+        Route::get('report', 'index');
+        Route::get('report/{report}', 'view');
     });
 });
 Route::get('tag', [TagController::class, 'index']);
