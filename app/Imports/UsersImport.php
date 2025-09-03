@@ -9,13 +9,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, ShouldQueue
 {
     protected $mentors;
+    protected $counselors;
     protected $rooms;
     protected $schoolId;
     protected $defaultPassword;
@@ -25,6 +25,7 @@ class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, Sho
     {
         // Preload teachers and rooms ONCE
         $this->mentors = User::where('role', 'teacher')->pluck('id', 'identifier')->toArray();
+        $this->counselors = User::where('role', 'counselor')->pluck('id', 'identifier')->toArray();
         $this->rooms   = Room::pluck('id', 'code')->toArray();
         $this->schoolId = $schoolId;
         $this->defaultPassword = Hash::make('password');
@@ -42,7 +43,8 @@ class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, Sho
                 'name'       => $row['nama'],
                 'username'   => $row['nis'],
                 'identifier' => $row['nis'],
-                'mentor_id'  => $this->mentors[$row['nip']],
+                'mentor_id'  => $this->mentors[$row['nip_wali']],
+                'counselor_id'  => $this->counselors[$row['nip_bk']],
                 'room_id'    => $this->rooms[$row['kode_kelas']],
                 'school_id'  => $this->schoolId,
                 'password'   => $this->defaultPassword,
