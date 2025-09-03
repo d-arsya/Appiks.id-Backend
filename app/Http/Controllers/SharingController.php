@@ -50,14 +50,4 @@ class SharingController extends Controller
         $sharing->update($request->all());
         return $this->success(new SharingResource($sharing));
     }
-
-    /**
-     * Reply to the sharing
-     */
-    #[Group('Sharing')]
-    public function close(Sharing $sharing)
-    {
-        $sharing->update(["status" => "selesai"]);
-        return $this->success(new SharingResource($sharing));
-    }
 }

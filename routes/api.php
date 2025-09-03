@@ -33,7 +33,6 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
-        Route::patch('sharing/close/{sharing}', 'close');
         Route::post('sharing', 'store');
         Route::get('sharing', 'index');
     });
