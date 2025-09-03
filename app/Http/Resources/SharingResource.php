@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class SharingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,8 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = parent::toArray($request);
-        unset($data['counselor_id']);
-        unset($data['mentor_id']);
-        unset($data['room_id']);
-        unset($data['school_id']);
-        return $data;
+        return array_merge(parent::toArray($request), [
+            'user' => new UserResource($this->whenLoaded('user')),
+        ]);
     }
 }

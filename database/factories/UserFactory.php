@@ -33,6 +33,7 @@ class UserFactory extends Factory
             'verified' => fake()->boolean(),
             'role' => fake()->randomElement(['super', 'admin', 'teacher', 'student', 'conselor', 'headteacher']),
             'mentor_id' => fake()->randomNumber(),
+            'counselor_id' => fake()->randomNumber(),
             'room_id' => fake()->randomNumber(),
             'school_id' => fake()->randomNumber(),
         ];

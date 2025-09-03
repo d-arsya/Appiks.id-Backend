@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             "verified" => true,
             "role" => "teacher",
             "mentor_id" => null,
+            "counselor_id" => null,
             "room_id" => null,
             "school_id" => $room->school_id
         ]);
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
             "identifier" => "55555",
             "verified" => true,
             "role" => "super",
+            "counselor_id" => null,
             "mentor_id" => null,
             "room_id" => null,
             "school_id" => $room->school_id
@@ -40,15 +42,17 @@ class UserSeeder extends Seeder
             "role" => "headteacher",
             "mentor_id" => null,
             "room_id" => null,
+            "counselor_id" => null,
             "school_id" => $room->school_id
         ]);
-        User::factory()->create([
+        $counselor = User::factory()->create([
             "username" => "22222",
             "identifier" => "22222",
             "verified" => true,
             "role" => "counselor",
             "mentor_id" => null,
             "room_id" => null,
+            "counselor_id" => null,
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
@@ -58,6 +62,7 @@ class UserSeeder extends Seeder
             "role" => "admin",
             "mentor_id" => null,
             "room_id" => null,
+            "counselor_id" => null,
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
@@ -67,6 +72,7 @@ class UserSeeder extends Seeder
             "role" => "student",
             "mentor_id" => $mentor->id,
             "room_id" => $room->id,
+            "counselor_id" => $counselor->id,
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
@@ -76,6 +82,7 @@ class UserSeeder extends Seeder
             "role" => "student",
             "mentor_id" => $mentor->id,
             "room_id" => $room->id,
+            "counselor_id" => $counselor->id,
             "school_id" => $room->school_id
         ]);
         User::factory()->create([
@@ -85,6 +92,7 @@ class UserSeeder extends Seeder
             "role" => "admin",
             "mentor_id" => $mentor->id,
             "room_id" => $room->id,
+            "counselor_id" => null,
             "school_id" => $room->school_id
         ]);
     }

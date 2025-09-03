@@ -53,7 +53,7 @@ class AuthController extends Controller
     public function me()
     {
         $user = Auth::user();
-        $data = User::with(['school', 'room', 'mentor'])->where('id', $user->id)->first();
+        $data = User::with(['school', 'room', 'mentor', 'counselor'])->where('id', $user->id)->first();
         return $this->success(new UserResource($data));
     }
 
