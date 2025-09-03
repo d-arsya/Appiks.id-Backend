@@ -28,6 +28,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('questionnaire/{type}', [QuestionnaireController::class, 'getAllQuestionnaires']);
     Route::get('questionnaire/{type}/{order}', [QuestionnaireController::class, 'getOneQuestionnaire']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
+    Route::get('quotes/{type}', [UserController::class, 'quotesOfTheDay'])->whereIn('type', ['secure', 'insecure']);
     Route::apiResource('video', VideoController::class);
 });
 Route::get('tag', [TagController::class, 'index']);

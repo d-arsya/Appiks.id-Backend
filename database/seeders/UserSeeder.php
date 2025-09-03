@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
             "username" => "22222",
             "identifier" => "22222",
             "verified" => true,
-            "role" => "conselor",
+            "role" => "counselor",
             "mentor_id" => null,
             "room_id" => null,
             "school_id" => $room->school_id

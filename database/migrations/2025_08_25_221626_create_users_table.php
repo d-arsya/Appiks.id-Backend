@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('identifier')->unique();
             $table->string('password')->default(Hash::make('password'));
             $table->boolean('verified')->default(false);
-            $table->enum('role', ['super', 'admin', 'teacher', 'student', 'conselor', 'headteacher'])->default('student');
+            $table->enum('role', ['super', 'admin', 'teacher', 'student', 'counselor', 'headteacher'])->default('student');
             $table->foreignIdFor(User::class, 'mentor_id')->nullable()->constrained()->onDelete('restrict');
             $table->foreignIdFor(Room::class)->nullable()->constrained()->onDelete('cascade');
             $table->foreignIdFor(School::class)->nullable()->constrained()->onDelete('cascade');
