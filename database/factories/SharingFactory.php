@@ -24,6 +24,7 @@ class SharingFactory extends Factory
             "replied_at" => fake()->date(),
             "replied_by" => fake()->name(),
             "priority" => fake()->randomElement(['tinggi', 'rendah']),
+            "created_at" => now(),
         ];
     }
 }

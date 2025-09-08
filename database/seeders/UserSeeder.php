@@ -95,5 +95,13 @@ class UserSeeder extends Seeder
             "counselor_id" => null,
             "school_id" => $room->school_id
         ]);
+        User::factory(20)->create([
+            "verified" => true,
+            "role" => "student",
+            "mentor_id" => $mentor->id,
+            "room_id" => $room->id,
+            "counselor_id" => $counselor->id,
+            "school_id" => $room->school_id
+        ]);
     }
 }

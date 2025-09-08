@@ -17,7 +17,9 @@ class MoodRecordFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "user_id" => fake()->randomNumber(),
+            "status" => fake()->randomElement(['happy', 'sad', 'angry', 'netral']),
+            "recorded" => fake()->date()
         ];
     }
 }

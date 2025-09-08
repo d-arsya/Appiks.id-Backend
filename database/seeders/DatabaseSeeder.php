@@ -18,7 +18,11 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             UserSeeder::class,
             QuestionnaireSeeder::class,
-            TagSeeder::class
+            TagSeeder::class,
+            VideoSeeder::class,
+            MoodRecordSeeder::class,
+            ReportSeeder::class,
+            SharingSeeder::class
         ]);
     }
 }
