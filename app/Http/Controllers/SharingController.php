@@ -6,9 +6,11 @@ use App\Http\Requests\CreateSharingRequest;
 use App\Http\Requests\ReplySharingRequest;
 use App\Http\Resources\SharingResource;
 use App\Models\Sharing;
+use App\Models\User;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class SharingController extends Controller
 {
@@ -42,6 +44,18 @@ class SharingController extends Controller
     }
 
     /**
+     * Get sharing detail
+     */
+    #[Group('Sharing')]
+    public function show(Sharing $sharing)
+    {
+        Gate::allowIf(function (User $authUser) use ($sharing) {
+            return $authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id;
+        });
+        return $this->created(new SharingResource($sharing));
+    }
+
+    /**
      * Reply to the sharing
      */
     #[Group('Sharing')]
@@ -49,5 +63,16 @@ class SharingController extends Controller
     {
         $sharing->update($request->all());
         return $this->success(new SharingResource($sharing));
+    }
+
+    /**
+     * Get sharing count
+     */
+    #[Group('Dashboard')]
+    public function getSharingCount()
+    {
+        Gate::authorize('dashboard-data');
+        $count = Sharing::whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
+        return $this->success(["count" => (int) $count]);
     }
 }

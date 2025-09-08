@@ -30,6 +30,8 @@ class ReportSeeder extends Seeder
                 $attrs = Report::factory()->raw([
                     "user_id" => $student->id,
                     "date"    => $date->format('Y-m-d'),
+                    "created_at"    => $date->format('Y-m-d H:i:s'),
+                    "updated_at"    => $date->format('Y-m-d H:i:s'),
                 ]);
 
                 $all[] = $attrs;

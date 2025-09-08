@@ -85,4 +85,55 @@ class ReportController extends Controller
         $report->update(["result" => $request->result, "status" => "dibatalkan"]);
         return $this->created(new ReportResource($report));
     }
+
+    /**
+     * Get waiting report count
+     */
+    #[Group('Dashboard')]
+    public function getReportCount()
+    {
+        Gate::authorize('dashboard-data');
+        $count = Report::whereStatus('menunggu')->whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
+        return $this->success(["count" => (int) $count]);
+    }
+    /**
+     * Get scheduled report count today
+     */
+    #[Group('Dashboard')]
+    public function getScheduleCount()
+    {
+        Gate::authorize('dashboard-data');
+        $count = Report::where('date', now()->toDateString())->whereStatus('disetujui')->whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
+        return $this->success(["count" => (int) $count]);
+    }
+    /**
+     * Get report count graph
+     * @response array{
+     *   data: array{
+     *     report: array<string, int>,
+     *     sharing: array<string, int>
+     *   }
+     * }
+     */
+    #[Group('Dashboard')]
+    public function getReportGraph()
+    {
+        Gate::authorize('dashboard-data');
+        $report = Report::whereIn('user_id', Auth::user()->counselored->pluck('id'))
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        $sharing = Sharing::whereIn('user_id', Auth::user()->counselored->pluck('id'))
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        return $this->success([
+            "report"  => (object) $report,
+            "sharing" => (object) $sharing,
+        ]);
+    }
 }

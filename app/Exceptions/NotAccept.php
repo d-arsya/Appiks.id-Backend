@@ -12,6 +12,6 @@ class NotAccept extends Exception
     use ApiResponder;
     public function __invoke(AccessDeniedHttpException $e, Request $request)
     {
-        return $this->error("Unauthorized", 404, null);
+        return $this->error("Unauthorized", 403, null);
     }
 }

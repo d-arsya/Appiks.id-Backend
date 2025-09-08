@@ -7,10 +7,12 @@ use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Imports\UsersImport;
 use App\Imports\UsersImportSync;
+use App\Models\User;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -30,6 +32,21 @@ class UserController extends Controller
     #[Group('User')]
     public function profile(UserFirstLoginRequest $request)
     {
+        Auth::user()->update($request->all());
+        return $this->success(new UserResource(Auth::user()), 'Success update user profile');
+    }
+
+    /**
+     * Update user profile
+     */
+    #[Group('User')]
+    public function editProfile(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            "username" => "string|unique:users,username,{$user->id}",
+            "phone" => "string|unique:users,phone,{$user->id}"
+        ]);
         Auth::user()->update($request->all());
         return $this->success(new UserResource(Auth::user()), 'Success update user profile');
     }
@@ -65,5 +82,16 @@ class UserController extends Controller
     {
         $quotes = QuotesHelper::random($type);
         return $this->success(compact('quotes'));
+    }
+
+    /**
+     * Get student count
+     */
+    #[Group('Dashboard')]
+    public function getStudentCount()
+    {
+        Gate::authorize('dashboard-data');
+        $count = User::whereRole('student')->whereSchoolId(Auth::user()->school_id)->count();
+        return $this->success(["count" => (int) $count]);
     }
 }

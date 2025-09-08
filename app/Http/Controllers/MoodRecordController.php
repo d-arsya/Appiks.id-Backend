@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MoodRecordSendRequest;
 use App\Http\Resources\MoodRecordResource;
 use App\Models\MoodRecord;
+use App\Models\User;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class MoodRecordController extends Controller
 {
@@ -72,8 +74,78 @@ class MoodRecordController extends Controller
         ];
 
         MoodRecord::create($request->all());
-        $status = in_array($request->status, ["happy", "netral"]) ? "Aman" : "Tidak Aman";
+        $status = in_array($request->status, ["happy", "neutral"]) ? "Aman" : "Tidak Aman";
         $message = $moodResponses[$status][array_rand($moodResponses[$status])];
         return $this->created(["status" => $status, "pesan" => $message], 'Success record mood');
+    }
+
+    /**
+     * Get mood count graph
+     */
+    #[Group('Dashboard')]
+    public function getMoodGraph()
+    {
+        Gate::authorize('dashboard-data');
+        $moods = MoodRecord::whereRecorded(now()->toDateString())
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        return $this->success([
+            "neutral" => (int) $moods["neutral"],
+            "sad" => (int) $moods["sad"],
+            "happy" => (int) $moods["happy"],
+            "angry" => (int) $moods["angry"],
+        ]);
+    }
+
+    /**
+     * Get mood history of the student
+     * @response array{
+     *   data: array{
+     *     recap: array{
+     *       happy: int,
+     *       angry: int,
+     *       sad: int,
+     *       neutral: int
+     *     },
+     *     mean: "secure"|"insecure",
+     *     moods: array<array{
+     *       recorded: "2025-08-12",
+     *       status: "happy"|"neutral"|"sad"|"angry"
+     *     }>,
+     *     user: array{
+     *       name: string,
+     *       phone: string
+     *     }
+     *   }
+     * }
+     */
+    #[Group('Mood Record')]
+    public function moodHistory(Request $request, User $user)
+    {
+        Gate::allowIf(function (User $authUser) use ($user) {
+            return $authUser->role == 'counselor' && $authUser->id === $user->counselor_id;
+        });
+        $lastMonth = Carbon::now()->subMonth()->format('Y-m');
+
+        // take last month’s mood records
+        $moods = $user->mood()
+            ->whereRaw('DATE_FORMAT(recorded, "%Y-%m") = ?', [$lastMonth])
+            ->get();
+
+        // count by status
+        $recap = $moods
+            ->groupBy('status')
+            ->map(fn($items) => $items->count());
+
+        // secure = neutral + happy
+        $secure   = ($recap['neutral'] ?? 0) + ($recap['happy'] ?? 0);
+        $insecure = ($recap['angry'] ?? 0) + ($recap['sad'] ?? 0);
+
+        // tentukan mean status
+        $mean = $secure > $insecure ? 'secure' : 'insecure';
+
+        return $this->success(compact('recap', 'mean', 'moods', 'user'));
     }
 }

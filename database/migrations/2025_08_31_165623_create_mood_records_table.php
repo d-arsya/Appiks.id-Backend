@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->date('recorded');
-            $table->enum('status', ['happy', 'sad', 'angry', 'netral']);
+            $table->enum('status', ['happy', 'sad', 'angry', 'neutral']);
             $table->timestamps();
             $table->unique(['recorded', 'user_id']);
         });

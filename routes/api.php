@@ -8,6 +8,7 @@ use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
+use App\Models\MoodRecord;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
@@ -30,12 +31,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::patch('profile', [UserController::class, 'profile']);
+    Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::apiResource('video', VideoController::class);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
         Route::post('sharing', 'store');
         Route::get('sharing', 'index');
+        Route::get('sharing/{sharing}', 'show');
     });
     Route::controller(ReportController::class)->group(function () {
         Route::patch('report/confirm/{report}', 'confirm');
@@ -45,5 +48,14 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report', 'index');
         Route::get('report/{report}', 'view');
     });
+    Route::prefix('dashboard')->group(function () {
+        Route::get('student-count', [UserController::class, 'getStudentCount']);
+        Route::get('report-count', [ReportController::class, 'getReportCount']);
+        Route::get('schedule-count', [ReportController::class, 'getScheduleCount']);
+        Route::get('sharing-count', [SharingController::class, 'getSharingCount']);
+        Route::get('report-graph', [ReportController::class, 'getReportGraph']);
+        Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
+    });
+    Route::get('mood-record/pattern/{user:username}', [MoodRecordController::class, 'moodHistory']);
 });
 Route::get('tag', [TagController::class, 'index']);
