@@ -19,6 +19,17 @@ class UserController extends Controller
 {
     use ApiResponder;
     /**
+     * Get all students data
+     */
+    #[Group('Dashboard')]
+    public function getStudents()
+    {
+        $role = Auth::user()->role;
+        $role = $role == 'teacher' ? 'mentor' : 'counselor';
+        $students = User::with(['room', 'mentor', 'lastmoodres'])->whereRole('student')->where($role . '_id', Auth::id())->get();
+        return $this->success(UserResource::collection($students));
+    }
+    /**
      * Get template for bulk create
      */
     #[Group('User')]
@@ -91,7 +102,8 @@ class UserController extends Controller
     public function getStudentCount()
     {
         Gate::authorize('dashboard-data');
-        $count = User::whereRole('student')->whereSchoolId(Auth::user()->school_id)->count();
+        $role = Auth::user()->role;
+        $count = User::whereRole('student')->where($role . '_id', Auth::id())->count();
         return $this->success(["count" => (int) $count]);
     }
 }

@@ -48,12 +48,15 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report/{report}', 'view');
     });
     Route::prefix('dashboard')->group(function () {
+        Route::get('student', [UserController::class, 'getStudents']);
         Route::get('student-count', [UserController::class, 'getStudentCount']);
         Route::get('report-count', [ReportController::class, 'getReportCount']);
         Route::get('schedule-count', [ReportController::class, 'getScheduleCount']);
         Route::get('sharing-count', [SharingController::class, 'getSharingCount']);
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
         Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
+        Route::get('mood-today-count', [MoodRecordController::class, 'getMoodTodayCount']);
+        Route::get('mood-today-count/{type}', [MoodRecordController::class, 'getMoodTodayCountByType'])->whereIn('type', ['secure', 'insecure']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });

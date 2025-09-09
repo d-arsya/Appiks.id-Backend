@@ -26,6 +26,32 @@ class MoodRecordController extends Controller
         return $this->success(["can" => $mood->count() == 0]);
     }
     /**
+     * Get mood record today count
+     */
+    #[Group('Dashboard')]
+    public function getMoodTodayCount()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'teacher';
+        });
+        $count = MoodRecord::whereIn('user_id', User::where('mentor_id', Auth::id())->pluck('id'))->where('recorded', Carbon::today())->count();
+        return $this->success(["count" => (int) $count]);
+    }
+    /**
+     * Get mood record today count by type
+     */
+    #[Group('Dashboard')]
+    public function getMoodTodayCountByType(Request $request, string $type)
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'teacher';
+        });
+        $types = $type == 'secure' ? ['happy', 'neutral'] : ['sad', 'angry'];
+        $count = MoodRecord::whereIn('status', $types)->whereIn('user_id', User::where('mentor_id', Auth::id())->pluck('id'))->where('recorded', Carbon::today())->count();
+        return $this->success(["count" => (int) $count]);
+    }
+
+    /**
      * Get user mood recaps by month
      * @param string $month YYYY-MM ex. 2025-09
      */
