@@ -101,6 +101,7 @@ class MoodRecordController extends Controller
 
     /**
      * Get mood history of the student
+     * @param string $type weekly | monthly
      * @response array{
      *   data: array{
      *     recap: array{
@@ -122,18 +123,27 @@ class MoodRecordController extends Controller
      * }
      */
     #[Group('Mood Record')]
-    public function moodHistory(Request $request, User $user)
+    public function moodHistory(Request $request, User $user, string $type)
     {
         Gate::allowIf(function (User $authUser) use ($user) {
             return $authUser->role == 'counselor' && $authUser->id === $user->counselor_id;
         });
-        $lastMonth = Carbon::now()->subMonth()->format('Y-m');
+        $request->validate(["type" => "required|in:weekly,monthly"]);
+        $query = MoodRecord::where('user_id', $user->id);
 
-        // take last month’s mood records
-        $moods = $user->mood()
-            ->whereRaw('DATE_FORMAT(recorded, "%Y-%m") = ?', [$lastMonth])
-            ->get();
+        if ($type === 'monthly') {
+            // semua data dalam bulan ini
+            $query->whereMonth('recorded', now()->month)
+                ->whereYear('recorded', now()->year);
+        } elseif ($type === 'weekly') {
+            // semua data dalam minggu ini
+            $query->whereBetween('recorded', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ]);
+        }
 
+        $moods = $query->get();
         // count by status
         $recap = $moods
             ->groupBy('status')

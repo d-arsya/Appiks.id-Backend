@@ -55,6 +55,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
         Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
     });
-    Route::get('mood-record/pattern/{user:username}', [MoodRecordController::class, 'moodHistory']);
+    Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });
 Route::get('tag', [TagController::class, 'index']);

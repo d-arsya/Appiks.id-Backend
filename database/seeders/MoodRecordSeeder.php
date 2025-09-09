@@ -19,8 +19,9 @@ class MoodRecordSeeder extends Seeder
 
         // ambil rentang 2 bulan terakhir
         $dates = collect(
-            Carbon::today()->subDays(59)->daysUntil(Carbon::yesterday())
+            Carbon::today()->subMonths(2)->startOfDay()->daysUntil(Carbon::yesterday())
         );
+
 
 
         $all = [];
