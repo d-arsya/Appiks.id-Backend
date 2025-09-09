@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
                 );
             });
         Gate::define('dashboard-data', function (User $user) {
-            return $user->role == 'counselor';
+            return $user->role != 'student';
         });
     }
 }

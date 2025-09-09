@@ -107,7 +107,7 @@ class ReportController extends Controller
         return $this->success(["count" => (int) $count]);
     }
     /**
-     * Get report count graph
+     * Get report and sharing count graph
      * @response array{
      *   data: array{
      *     report: array<string, int>,

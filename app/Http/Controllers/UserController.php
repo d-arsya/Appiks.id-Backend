@@ -29,6 +29,25 @@ class UserController extends Controller
         $students = User::with(['room', 'mentor', 'lastmoodres'])->whereRole('student')->where($role . '_id', Auth::id())->get();
         return $this->success(UserResource::collection($students));
     }
+
+    /**
+     * Get all users data at one school
+     */
+    #[Group('User')]
+    public function getUsers()
+    {
+        $users = User::whereSchoolId(Auth::user()->school_id)->get();
+        return $this->success(UserResource::collection($users));
+    }
+    /**
+     * Get user data by username
+     */
+    #[Group('User')]
+    public function getUserDetail(string $username)
+    {
+        $user = User::with(['room', 'mentor'])->where('username', $username)->first();
+        return $this->success(new UserResource($user));
+    }
     /**
      * Get template for bulk create
      */
@@ -96,14 +115,24 @@ class UserController extends Controller
     }
 
     /**
-     * Get student count
+     * Get user count by type
      */
     #[Group('Dashboard')]
-    public function getStudentCount()
+    public function getUserCount(string $type)
     {
         Gate::authorize('dashboard-data');
         $role = Auth::user()->role;
-        $count = User::whereRole('student')->where($role . '_id', Auth::id())->count();
+        if ($type == 'student') {
+            if ($role == 'headteacher') {
+                # code...
+                $count = User::whereRole('student')->whereSchoolId(Auth::user()->school_id)->count();
+            } else {
+                $role = $role == 'teacher' ? 'mentor' : 'counselor';
+                $count = User::whereRole('student')->where($role . '_id', Auth::id())->count();
+            }
+        } else {
+            $count = User::whereRole($type)->whereSchoolId(Auth::user()->school_id)->count();
+        }
         return $this->success(["count" => (int) $count]);
     }
 }

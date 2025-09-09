@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -49,8 +50,11 @@ Route::middleware('auth:api')->group(function () {
     });
     Route::prefix('dashboard')->group(function () {
         Route::get('student', [UserController::class, 'getStudents']);
-        Route::get('student-count', [UserController::class, 'getStudentCount']);
+        Route::get('users', [UserController::class, 'getUsers']);
+        Route::get('users/{username}', [UserController::class, 'getUserDetail']);
+        Route::get('user-count/{type}', [UserController::class, 'getUserCount'])->whereIn('type', ['student', 'teacher', 'counselor']);
         Route::get('report-count', [ReportController::class, 'getReportCount']);
+        Route::get('room-count', [RoomController::class, 'getRoomCount']);
         Route::get('schedule-count', [ReportController::class, 'getScheduleCount']);
         Route::get('sharing-count', [SharingController::class, 'getSharingCount']);
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
