@@ -23,8 +23,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('check-username', [AuthController::class, 'checkUsername']);
     Route::get('mood_record/recap/{month}', [MoodRecordController::class, 'recapPerMonth']);
     Route::get('mood_record/check', [MoodRecordController::class, 'check']);
-    Route::get('questionnaire/{type}', [QuestionnaireController::class, 'getAllQuestionnaires']);
-    Route::get('questionnaire/{type}/{order}', [QuestionnaireController::class, 'getOneQuestionnaire']);
+    Route::get('questionnaire', [QuestionnaireController::class, 'getAllQuestionnaires']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
     Route::get('quotes/{type}', [UserController::class, 'quotesOfTheDay'])->whereIn('type', ['secure', 'insecure']);
     Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);

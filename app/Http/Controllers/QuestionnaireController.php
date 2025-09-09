@@ -8,6 +8,7 @@ use App\Models\Questionnaire;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class QuestionnaireController extends Controller
 {
@@ -16,11 +17,9 @@ class QuestionnaireController extends Controller
      * Get questionnaire by type
      */
     #[Group('Questionnaire')]
-    public function getAllQuestionnaires(Request $request, string $type)
+    public function getAllQuestionnaires()
     {
-        $request->validate([
-            'type' => 'string|in:insecure,secure',
-        ]);
+        $type = in_array(Auth::user()->lastmood(), ['neutral', 'happy']) ? 'secure' : 'insecure';
         $questionnaires = Questionnaire::where('type', $type)->get();
         return $this->success(QuestionnaireResource::collection($questionnaires));
     }
@@ -292,7 +291,7 @@ class QuestionnaireController extends Controller
                 'skills' => 'Analitis & Logika.',
                 'environment' => 'Dinamis, cepat, berorientasi pada target.',
                 'description' => 'Kamu adalah pemecah masalah yang ulung dan bersinar dalam lingkungan kompetitif di mana keahlian dan hasil kerjamu dihargai.',
-                'paths' => 'Riset, Teknologi, Finans, Konsultasi, Engineering, atau Entrepreneurship.'
+                'paths' => 'Riset, Teknologi, Finans, Konsultasi, Engineering, Entrepreneurship'
             ],
             'advocate' => [
                 'name' => 'The Advocate (Pembela/Pendukung)',
@@ -300,7 +299,7 @@ class QuestionnaireController extends Controller
                 'skills' => 'Komunikasi & Bahasa, Sosial & Emosional.',
                 'environment' => 'Komunal dan suportif.',
                 'description' => 'Kamu punya hasrat kuat untuk membuat dunia menjadi lebih baik, dimulai dari membantu orang di sekitarmu.',
-                'paths' => 'Psikologi, Pendidikan, Kedokteran, Hukum, NGO, Customer Experience, atau HR.'
+                'paths' => 'Psikologi, Pendidikan, Kedokteran, Hukum, NGO, Customer Experience, HR'
             ],
             'innovator' => [
                 'name' => 'The Innovator (Inovator)',
@@ -308,7 +307,7 @@ class QuestionnaireController extends Controller
                 'skills' => 'Seni & Praktek.',
                 'environment' => 'Fleksibel, tidak kaku, mendukung eksperimen.',
                 'description' => 'Kamu adalah pemikir orisinal yang tidak suka dibatasi dan berkembang dalam lingkungan yang menghargai ide-ide baru dan cara-cara yang tidak konvensional.',
-                'paths' => 'Seni, Desain (Grafis, UX/UI), Pemrograman Kreatif, Marketing, Penulisan, atau penelitian R&D.'
+                'paths' => 'Seni, Desain (Grafis, UX/UI), Pemrograman Kreatif, Marketing, Penulisan, Peneliti'
             ],
             'builder' => [
                 'name' => 'The Builder (Pembangun Komunitas)',
@@ -316,7 +315,7 @@ class QuestionnaireController extends Controller
                 'skills' => 'Sosial & Emosional.',
                 'environment' => 'Komunal dan suportif.',
                 'description' => 'Kamu adalah perekat yang hebat. Kamu percaya bahwa pencapaian terbesar diraih bersama-sama dan ahli dalam membangun kepercayaan serta sistem yang membuat tim solid.',
-                'paths' => 'Manajemen Proyek, Operasional, Event Organizer, Guru, Community Manager, atau bidang-bidang yang membutuhkan koordinasi intensif.'
+                'paths' => 'Manajemen Proyek, Operasional, Event Organizer, Guru, Community Manager'
             ]
         ];
 
@@ -324,11 +323,14 @@ class QuestionnaireController extends Controller
         $profile_info = [
             'archetype' => [
                 'primary' => $archetypes_info[$primary_archetype_key]['name'],
+                'secondary' => "",
+                'name' => "",
             ],
             'summary' => [
                 'Kompas Nilai' => '',
                 'Peralatan Andalan' => '',
-                'Medan Ideal' => ''
+                'Medan Ideal' => '',
+                'Path Karir' => '',
             ],
             'description' => $archetypes_info[$primary_archetype_key]['description'],
             'mission_challenge' => [
@@ -347,12 +349,14 @@ class QuestionnaireController extends Controller
                 $profile_info['summary']['Kompas Nilai'] = "{$archetypes_info[$primary_archetype_key]['values']} dan {$archetypes_info[$secondary_archetype_key]['values']}";
                 $profile_info['summary']['Peralatan Andalan'] = "{$archetypes_info[$primary_archetype_key]['skills']} dan {$archetypes_info[$secondary_archetype_key]['skills']}";
                 $profile_info['summary']['Medan Ideal'] = "{$archetypes_info[$primary_archetype_key]['environment']} dan {$archetypes_info[$secondary_archetype_key]['environment']}";
+                $profile_info['summary']['Path Karir'] = "{$archetypes_info[$primary_archetype_key]['paths']}, {$archetypes_info[$secondary_archetype_key]['paths']}";
             } else {
                 // Jika hanya satu arketipe yang sangat dominan
                 $profile_info['archetype']['name'] = $archetypes_info[$primary_archetype_key]['name'];
                 $profile_info['summary']['Kompas Nilai'] = $archetypes_info[$primary_archetype_key]['values'];
                 $profile_info['summary']['Peralatan Andalan'] = $archetypes_info[$primary_archetype_key]['skills'];
                 $profile_info['summary']['Medan Ideal'] = $archetypes_info[$primary_archetype_key]['environment'];
+                $profile_info['summary']['Path Karir'] = $archetypes_info[$primary_archetype_key]['paths'];
             }
         }
 
