@@ -6,15 +6,14 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     environment: APPIKS
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy over SSH (with password)
+      - name: Build on VPS
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.HOST }}
@@ -25,6 +24,21 @@ jobs:
             git pull
             docker build -t disyfa/appiks-be .
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: APPIKS
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy on VPS
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
             cd /var/www/api
             docker compose up -d
             docker exec appiks-backend php artisan migrate:fresh --seed

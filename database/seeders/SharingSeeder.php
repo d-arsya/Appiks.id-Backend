@@ -22,7 +22,7 @@ class SharingSeeder extends Seeder
         foreach ($students as $student) {
             // 5 tanggal unik acak dalam 30 hari terakhir
             $dates = collect(range(0, 30))
-                ->map(fn($i) => now()->subDays($i))
+                ->map(fn($i) => Carbon::yesterday()->subDays($i))
                 ->shuffle()
                 ->take(5)
                 ->values();
