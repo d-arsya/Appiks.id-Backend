@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use League\CommonMark\Extension\SmartPunct\Quote;
 
 class School extends Model
 {
@@ -39,5 +40,9 @@ class School extends Model
     public function videos()
     {
         return $this->hasMany(Video::class);
+    }
+    public function quotes()
+    {
+        return $this->hasMany(Quote::class);
     }
 }

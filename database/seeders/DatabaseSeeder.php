@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             VideoSeeder::class,
             MoodRecordSeeder::class,
             ReportSeeder::class,
-            SharingSeeder::class
+            SharingSeeder::class,
+            QuotesSeeder::class
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SharingController;
@@ -33,6 +34,8 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::apiResource('video', VideoController::class);
+    Route::apiResource('quote', QuoteController::class)->except(['update']);
+    Route::get('quote/type/{type}', [QuoteController::class, 'getByType'])->whereIn('type', ['daily', 'secure', 'insecure']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
