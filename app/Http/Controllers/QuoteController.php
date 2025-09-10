@@ -27,17 +27,25 @@ class QuoteController extends Controller
         return $this->success(QuoteResource::collection($quotes));
     }
     /**
-     * Get all quotes by type
+     * Get random quotes by mood
      */
     #[Group('Quote')]
-    public function getByType(string $type)
+    public function getByType()
     {
-        $quotes = Quote::whereType($type)->where('school_id', Auth::user()->school_id);
-        if ($type == 'daily') {
-            $quotes = $quotes->inRandomOrder()->take(5)->get();
-        } else {
-            $quotes = $quotes->inRandomOrder()->take(1)->get();
-        }
+        // return json_encode(Auth::user()->lastmood());
+        Gate::allowIf(fn(User $user) => $user->role == 'student' && $user->lastmood() !== null);
+        $type = Auth::user()->lastmood();
+        $type = in_array($type, ['happy', 'neutral']) ? 'secure' : 'insecure';
+        $quotes = Quote::whereType($type)->where('school_id', Auth::user()->school_id)->inRandomOrder()->take(1)->first();
+        return $this->success(new QuoteResource($quotes));
+    }
+    /**
+     * Get random quotes daily
+     */
+    #[Group('Quote')]
+    public function getDaily()
+    {
+        $quotes = Quote::whereType('daily')->where('school_id', Auth::user()->school_id)->inRandomOrder()->limit(5)->get();
         return $this->success(QuoteResource::collection($quotes));
     }
 

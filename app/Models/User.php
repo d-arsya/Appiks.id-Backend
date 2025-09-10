@@ -82,7 +82,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function lastmood()
     {
-        return $this->mood()->latest('recorded')->first()->status;
+        return $this->mood()->whereRecorded(now()->toDateString())->first()?->status;
     }
 
     public function lastmoodres()

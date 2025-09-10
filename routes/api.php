@@ -10,8 +10,6 @@ use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
-use App\Models\MoodRecord;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,15 +25,15 @@ Route::middleware('auth:api')->group(function () {
     Route::get('mood_record/check', [MoodRecordController::class, 'check']);
     Route::get('questionnaire', [QuestionnaireController::class, 'getAllQuestionnaires']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
-    Route::get('quotes/{type}', [UserController::class, 'quotesOfTheDay'])->whereIn('type', ['secure', 'insecure']);
     Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::apiResource('video', VideoController::class);
+    Route::get('quote/mood', [QuoteController::class, 'getByType']);
+    Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
-    Route::get('quote/type/{type}', [QuoteController::class, 'getByType'])->whereIn('type', ['daily', 'secure', 'insecure']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');

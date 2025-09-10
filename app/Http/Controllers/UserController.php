@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helper\QuotesHelper;
 use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Imports\UsersImport;
@@ -101,17 +100,6 @@ class UserController extends Controller
             $count = $data->count();
             return $this->success(compact(['data', 'count']));
         }
-    }
-
-    /**
-     * Get quotes of the day by mood status
-     * @param string $type secure or insecure
-     */
-    #[Group('Quotes')]
-    public function quotesOfTheDay(string $type)
-    {
-        $quotes = QuotesHelper::random($type);
-        return $this->success(compact('quotes'));
     }
 
     /**
