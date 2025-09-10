@@ -37,7 +37,7 @@ class MoodRecordSendRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "status" => "required|string|in:happy,sad,angry,netral"
+            "status" => "required|string|in:happy,sad,angry,neutral"
         ];
     }
 
