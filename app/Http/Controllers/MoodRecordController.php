@@ -27,6 +27,44 @@ class MoodRecordController extends Controller
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->get();
         return $this->success(["can" => $mood->count() == 0]);
     }
+
+    /**
+     * Check user's mood today
+     * 
+     * Mengecek status mood siswa hari ini
+     */
+    #[Group('Mood Record')]
+    public function today()
+    {
+        $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->first();
+        return $this->success(["type" => $mood->status, "status" => in_array($mood->status, ['happy', 'neutral']) ? 'secure' : 'insecure']);
+    }
+
+    /**
+     * Check user's streak point
+     * 
+     * Menghitung poin streak
+     */
+    #[Group('Mood Record')]
+    public function streaks()
+    {
+        $userId = Auth::id();
+        $streak = 0;
+        $date   = Carbon::today();
+
+        while (
+            MoodRecord::where('user_id', $userId)
+            ->whereDate('recorded', $date)
+            ->exists()
+        ) {
+            $streak++;
+            $date->subDay(); // mundur 1 hari
+        }
+
+        return $this->success([
+            "streak" => $streak,
+        ]);
+    }
     /**
      * Get mood record today count
      */
