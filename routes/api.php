@@ -30,7 +30,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
-    Route::apiResource('video', VideoController::class);
+    Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
+    Route::apiResource('video', VideoController::class)->except(['show']);
     Route::get('quote/mood', [QuoteController::class, 'getByType']);
     Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);

@@ -20,6 +20,13 @@ class VideoPolicy
     /**
      * Determine whether the user can update the model.
      */
+    public function view(User $user, Video $video): bool
+    {
+        return $user->school_id == $video->school_id;;
+    }
+    /**
+     * Determine whether the user can update the model.
+     */
     public function update(User $user, Video $video): bool
     {
         return $user->role == 'admin' && $user->school_id == $video->school_id;;

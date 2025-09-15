@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateVideoRequest;
 use App\Http\Resources\VideoResource;
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Video;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
@@ -18,6 +19,8 @@ class VideoController extends Controller
     use ApiResponder;
     /**
      * Get all video
+     * 
+     * Mendapatkan semua data video di sekolah tersebut
      */
     #[Group('Content')]
     public function index()
@@ -27,16 +30,20 @@ class VideoController extends Controller
     }
     /**
      * Get all video by tag
+     * 
+     * Mendapatkan semua video dengan tag tertentu di sekolah tersebut. Menggunakan id dari Tag
      */
     #[Group('Content')]
     public function getByTag(Tag $tag)
     {
-        $videos = $tag->videos()->with('tags')->get();
+        $videos = $tag->videos()->with('tags')->where('school_id', Auth::user()->school_id)->get();
         return $this->success(VideoResource::collection($videos));
     }
 
     /**
      * Create new video
+     * 
+     * Membuat sebuah video baru. Cukup mengirimkan ID youtube video dan sistem akan mengambil meta data yang dibutuhkan
      */
     #[Group('Content')]
     public function store(CreateVideoRequest $request)
@@ -52,10 +59,13 @@ class VideoController extends Controller
     }
     /**
      * Update video
+     * 
+     * Mengupdate tag yang dimiliki oleh video tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Content')]
     public function update(Request $request, Video $video)
     {
+        Gate::authorize('update', $video);
         $request->validate([
             "tags" => "array",
             "tags.*" => "integer|exists:tags,id"
@@ -67,6 +77,8 @@ class VideoController extends Controller
 
     /**
      * Delete video
+     * 
+     * Menghapus konten video di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
     #[Group('Content')]
     public function destroy(Video $video)
@@ -76,12 +88,24 @@ class VideoController extends Controller
         return $this->success(null);
     }
 
+    /**
+     * Get video detail
+     * Mendapatkan video detail berdasarkan ID Youtube
+     */
+    #[Group('Content')]
+    public function getVideoDetailId(Video $video)
+    {
+        Gate::authorize('view', $video);
+        $data = $this->getVideoDetail($video->video_id);
+        $video->update($data);
+        return $this->success(new VideoResource($video));
+    }
+
     private function getVideoDetail($id)
     {
         $html = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0',
         ])->get("https://www.youtube.com/watch?v=" . $id)->body();
-
         $data = [];
 
         // --- 1) Extract ytInitialPlayerResponse ---
