@@ -19,6 +19,8 @@ class QuoteController extends Controller
 
     /**
      * Get all quotes
+     * 
+     * Mendapatkan semua jenis quotes yang ada di sekolah tersebut
      */
     #[Group('Quote')]
     public function index()
@@ -28,11 +30,12 @@ class QuoteController extends Controller
     }
     /**
      * Get random quotes by mood
+     * 
+     * Mendapatkan quotes random berdasarkan mood terakhir. Hanya bisa diakses oleh user yang sudah merekam mood hari itu
      */
     #[Group('Quote')]
     public function getByType()
     {
-        // return json_encode(Auth::user()->lastmood());
         Gate::allowIf(fn(User $user) => $user->role == 'student' && $user->lastmood() !== null);
         $type = Auth::user()->lastmood();
         $type = in_array($type, ['happy', 'neutral']) ? 'secure' : 'insecure';
@@ -41,6 +44,8 @@ class QuoteController extends Controller
     }
     /**
      * Get random quotes daily
+     * 
+     * Mendapatkan 5 quotes random harian
      */
     #[Group('Quote')]
     public function getDaily()
@@ -52,6 +57,8 @@ class QuoteController extends Controller
 
     /**
      * Create new quote
+     * 
+     * Membuat quotes baru. Hanya bisa dilakukan oleh admin TU
      */
     #[Group('Quote')]
     public function store(CreateQuoteRequest $request)
@@ -63,6 +70,8 @@ class QuoteController extends Controller
 
     /**
      * Show quote detail
+     * 
+     * Mendapatkan detail quotes berdasarkan ID dan hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Quote')]
     public function show(Quote $quote)
@@ -74,6 +83,8 @@ class QuoteController extends Controller
 
     /**
      * Delete quote
+     * 
+     * Menghapus quotes berdasarkan ID dan hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Quote')]
     public function destroy(Quote $quote)

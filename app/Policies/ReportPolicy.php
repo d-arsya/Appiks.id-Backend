@@ -29,6 +29,6 @@ class ReportPolicy
      */
     public function update(User $user, Report $report): bool
     {
-        return $user->role == 'counselor' && $user->id == $report->user->counselor_id;
+        return $user->role == 'counselor' && $user->school_id == $report->user->school_id;
     }
 }

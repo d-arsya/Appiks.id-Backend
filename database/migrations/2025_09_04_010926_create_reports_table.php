@@ -15,10 +15,12 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'counselor_id')->nullable()->constrained()->nullOnDelete();
             $table->string('topic');
+            $table->string('room');
             $table->date('date');
             $table->string('time');
-            $table->enum('status', ['menunggu', 'selesai', 'dibatalkan', 'disetujui']);
+            $table->enum('status', ['menunggu', 'selesai', 'dibatalkan', 'disetujui', 'dijadwalkan'])->default('menunggu');
             $table->enum('priority', ['tinggi', 'rendah']);
             $table->text('notes')->nullable();
             $table->text('result')->nullable();

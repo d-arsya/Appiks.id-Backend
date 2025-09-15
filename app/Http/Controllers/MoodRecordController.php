@@ -18,6 +18,8 @@ class MoodRecordController extends Controller
     use ApiResponder;
     /**
      * Is user can record today's mood
+     * 
+     * Mengecek apakah murid bisa melakukan rekam mood hari ini
      */
     #[Group('Mood Record')]
     public function check()
@@ -53,11 +55,16 @@ class MoodRecordController extends Controller
 
     /**
      * Get user mood recaps by month
+     * 
+     * Mendapatkan rekapitulasi rekaman mood milik murid secara bulanan. Hanya bisa diakses oleh murid
      * @param string $month YYYY-MM ex. 2025-09
      */
     #[Group('Mood Record')]
     public function recapPerMonth(string $month)
     {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'student';
+        });
         request()->validate([
             'month' => ['required', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
         ]);
@@ -67,6 +74,8 @@ class MoodRecordController extends Controller
 
     /**
      * Record mood the authenticated user
+     * 
+     * Merekam mood siswa pada hari ini dan akan mengembalikan status serta quotes
      */
     #[Group('Mood Record')]
     public function store(MoodRecordSendRequest $request)
@@ -127,6 +136,8 @@ class MoodRecordController extends Controller
 
     /**
      * Get mood history of the student
+     * 
+     * Mendapatkan rekapitulasi rekam mood siswa berdasarkan username siswa tersebut. Tersedia opsi bulanan dan mingguan (terakhir). Hanya bisa diakses oleh BK dari siswa tersebut
      * @param string $type weekly | monthly
      * @response array{
      *   data: array{

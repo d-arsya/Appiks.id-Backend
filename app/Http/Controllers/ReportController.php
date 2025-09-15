@@ -58,11 +58,24 @@ class ReportController extends Controller
 
     /**
      * Confirm report meeting
+     * 
      */
     #[Group('Report')]
     public function confirm(ConfirmReportRequest $request, Report $report)
     {
         $report->update($request->all());
+        return $this->created(new ReportResource($report));
+    }
+
+    /**
+     * Reschedule report meeting
+     */
+    #[Group('Report')]
+    public function reschedule(ConfirmReportRequest $request, Report $report)
+    {
+        $data = $request->all();
+        $data["status"] = "dijadwalkan";
+        $report->update($data);
         return $this->created(new ReportResource($report));
     }
 

@@ -19,11 +19,14 @@ class SharingController extends Controller
     /**
      * Get all sharing data
      * 
-     * Get latest sharings data belongs to student for student or belongs to all student of counselored for counselor
+     * Mendapatkan semua data curhatan milik siswa tersebut atau siswa yang dibawahi oleh BK tersebut. Hanya bisa diakses oleh BK dan siswa
      */
     #[Group('Sharing')]
     public function index()
     {
+        Gate::allowIf(function (User $user) {
+            return in_array($user->role, ['student', 'counselor']);
+        });
         $user = Auth::user();
         if ($user->role == 'student') {
             $sharings = $user->sharing;
@@ -35,6 +38,8 @@ class SharingController extends Controller
 
     /**
      * Create new sharing
+     * 
+     * Membuat curhatan baru dan hanya bisa dilakukan oleh siswa. Secara default prioritasnya adalah rendah
      */
     #[Group('Sharing')]
     public function store(CreateSharingRequest $request)
@@ -45,18 +50,22 @@ class SharingController extends Controller
 
     /**
      * Get sharing detail
+     * 
+     * Mendapatkan detail curhatan. Hanya bisa diakses oleh murid atau BK dari murid tersebut
      */
     #[Group('Sharing')]
     public function show(Sharing $sharing)
     {
         Gate::allowIf(function (User $authUser) use ($sharing) {
-            return $authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id;
+            return ($authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id) || $authUser->role == 'student' && $authUser->id === $sharing->user_id;
         });
-        return $this->created(new SharingResource($sharing));
+        return $this->success(new SharingResource($sharing));
     }
 
     /**
      * Reply to the sharing
+     * 
+     * Membalas curhatan siswa dan hanya bisa dilakukan oleh Guru BK siswa tersebut
      */
     #[Group('Sharing')]
     public function reply(ReplySharingRequest $request, Sharing $sharing)

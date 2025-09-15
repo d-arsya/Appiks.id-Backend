@@ -16,6 +16,8 @@ class AuthController extends Controller
     use ApiResponder;
     /**
      * Get JWT token(login)
+     * 
+     * Mendapatkan JWT token untuk mengakses guarded route
      */
     #[Group('Authentication')]
     public function login(UserLoginRequest $request)
@@ -48,6 +50,8 @@ class AuthController extends Controller
 
     /**
      * Get the autheticated user profile
+     * 
+     * 
      */
     #[Group('User')]
     public function me()
@@ -59,6 +63,8 @@ class AuthController extends Controller
 
     /**
      * Invalidate the JWT (logout)
+     * 
+     * Meng-invalidasi token JWT sehingga tidak bisa dipakai lagi
      */
     #[Group('Authentication')]
     public function logout()
@@ -69,6 +75,8 @@ class AuthController extends Controller
 
     /**
      * Get JWT refreshed token
+     * 
+     * Mendapatkan refresh token apabila token JWT sudah expired (max 2 jam setelah login pertama)
      */
     #[Group('Authentication')]
     public function refresh()

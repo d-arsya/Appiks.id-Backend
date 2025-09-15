@@ -104,6 +104,8 @@ class UserController extends Controller
 
     /**
      * Get user count by type
+     * 
+     * Dipakai untuk mendapatkan jumlah user berdasarkan role nya. Tidak bisa diakses oleh murid. Apabila diakses oleh guru (wali atau BK) maka akan menampilkan hanya murid yang diwalikan atau di BK-kan. Namun ketika diakses oleh TU atau Kepala Sekolah maka akan menampilkan jumlah satu sekolah
      */
     #[Group('Dashboard')]
     public function getUserCount(string $type)
@@ -112,7 +114,6 @@ class UserController extends Controller
         $role = Auth::user()->role;
         if ($type == 'student') {
             if ($role == 'headteacher') {
-                # code...
                 $count = User::whereRole('student')->whereSchoolId(Auth::user()->school_id)->count();
             } else {
                 $role = $role == 'teacher' ? 'mentor' : 'counselor';

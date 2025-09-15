@@ -90,6 +90,7 @@ class VideoController extends Controller
 
     /**
      * Get video detail
+     * 
      * Mendapatkan video detail berdasarkan ID Youtube
      */
     #[Group('Content')]

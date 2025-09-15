@@ -46,6 +46,7 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('report/confirm/{report}', 'confirm');
         Route::patch('report/close/{report}', 'close');
         Route::patch('report/cancel/{report}', 'cancel');
+        Route::patch('report/reschedule/{report}', 'reschedule');
         Route::post('report', 'store');
         Route::get('report', 'index');
         Route::get('report/{report}', 'view');

@@ -5,20 +5,27 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AnalyzeQuestionnaireRequest;
 use App\Http\Resources\QuestionnaireResource;
 use App\Models\Questionnaire;
+use App\Models\User;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class QuestionnaireController extends Controller
 {
     use ApiResponder;
     /**
      * Get questionnaire by type
+     * 
+     * Akan mendapatkan pertanyaan angket berdasarkan data terakhir mood siswa tersebut. Hanya bisa diakses oleh siswa
      */
     #[Group('Questionnaire')]
     public function getAllQuestionnaires()
     {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'student';
+        });
         $type = in_array(Auth::user()->lastmood(), ['neutral', 'happy']) ? 'secure' : 'insecure';
         $questionnaires = Questionnaire::where('type', $type)->get();
         return $this->success(QuestionnaireResource::collection($questionnaires));
@@ -39,6 +46,8 @@ class QuestionnaireController extends Controller
     }
     /**
      * Analyze questionnaire answer
+     * 
+     * Menganalisa hasil angket siswa. Hanya bisa diakses oleh siswa dan mengirimkan semua jawaban angket berupa array string jawaban
      * @param string $type secure | insecure.
      */
     #[Group('Questionnaire')]

@@ -32,6 +32,7 @@ class ConfirmReportRequest extends FormRequest
              */
             'time' => Rule::date()->format("H:i"),
             "notes" => "required|string",
+            "room" => "required|string",
         ];
     }
 

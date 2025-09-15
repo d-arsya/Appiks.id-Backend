@@ -15,4 +15,9 @@ class Report extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function counselor()
+    {
+        return $this->belongsTo(User::class, 'counselor_id', 'id');
+    }
 }

@@ -33,6 +33,7 @@ class CreateReportRequest extends FormRequest
              */
             'time' => Rule::date()->format("H:i"),
             "topic" => "required|string",
+            "room" => "required|string",
         ];
     }
 
@@ -40,6 +41,7 @@ class CreateReportRequest extends FormRequest
     {
         $this->merge([
             "user_id" => Auth::id(),
+            "counselor_id" => Auth::user()->counselor_id,
             "priority" => Auth::user()->lastmood() == "angry" ? "tinggi" : "rendah"
         ]);
     }
