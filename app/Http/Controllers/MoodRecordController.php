@@ -103,9 +103,6 @@ class MoodRecordController extends Controller
         Gate::allowIf(function (User $user) {
             return $user->role == 'student';
         });
-        request()->validate([
-            'month' => ['required', 'regex:/^\d{4}-(0[1-9]|1[0-2])$/'],
-        ]);
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', 'like', "$month-__")->get();
         return $this->success(MoodRecordResource::collection($mood));
     }
