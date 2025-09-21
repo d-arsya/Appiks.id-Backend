@@ -28,7 +28,7 @@ class ReportController extends Controller
     {
         $user = Auth::user();
         if ($user->role == 'student') {
-            $reports = $user->report;
+            $reports = $user->report()->with(['counselor', 'user'])->orderBy('date')->get();
         } else if ($user->role == 'counselor') {
             $reports = Report::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }

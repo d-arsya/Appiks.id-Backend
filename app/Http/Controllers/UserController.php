@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Imports\UsersImport;
@@ -28,6 +29,15 @@ class UserController extends Controller
         $students = User::with(['room', 'mentor', 'lastmoodres'])->whereRole('student')->where($role . '_id', Auth::id())->get();
         return $this->success(UserResource::collection($students));
     }
+    /**
+     * Create new user at the school
+     */
+    #[Group('User')]
+    public function store(CreateUserRequest $request)
+    {
+        $user = User::create($request->all());
+        return $this->success(new UserResource($user));
+    }
 
     /**
      * Get all users data at one school
@@ -36,6 +46,15 @@ class UserController extends Controller
     public function getUsers()
     {
         $users = User::whereSchoolId(Auth::user()->school_id)->get();
+        return $this->success(UserResource::collection($users));
+    }
+    /**
+     * Get all users data at one school by its type
+     */
+    #[Group('User')]
+    public function getUsersByType(string $type)
+    {
+        $users = User::whereRole($type)->whereSchoolId(Auth::user()->school_id)->get();
         return $this->success(UserResource::collection($users));
     }
     /**
@@ -81,7 +100,7 @@ class UserController extends Controller
     }
 
     /**
-     * Create bulk user with excel
+     * Create student bulk with excel
      */
     #[Group('User')]
     public function bulkCreate(Request $request)
@@ -115,6 +134,8 @@ class UserController extends Controller
         if ($type == 'student') {
             if ($role == 'headteacher') {
                 $count = User::whereRole('student')->whereSchoolId(Auth::user()->school_id)->count();
+            } else if ($role == 'admin') {
+                $count = User::whereRole($type)->whereSchoolId(Auth::user()->school_id)->count();
             } else {
                 $role = $role == 'teacher' ? 'mentor' : 'counselor';
                 $count = User::whereRole('student')->where($role . '_id', Auth::id())->count();

@@ -29,7 +29,7 @@ class SharingController extends Controller
         });
         $user = Auth::user();
         if ($user->role == 'student') {
-            $sharings = $user->sharing;
+            $sharings = $user->sharing()->with(['user'])->orderBy('replied_at')->get();
         } else if ($user->role == 'counselor') {
             $sharings = Sharing::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }

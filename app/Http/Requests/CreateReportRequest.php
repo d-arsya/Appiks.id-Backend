@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Report;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;

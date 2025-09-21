@@ -37,7 +37,10 @@ class MoodRecordController extends Controller
     public function today()
     {
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->first();
-        return $this->success(["type" => $mood->status, "status" => in_array($mood->status, ['happy', 'neutral']) ? 'secure' : 'insecure']);
+        if ($mood) {
+            return $this->success(["type" => $mood->status, "status" => in_array($mood->status, ['happy', 'neutral']) ? 'secure' : 'insecure']);
+        }
+        return $this->error("User doesn't have mood record today", 404, null);
     }
 
     /**
@@ -103,7 +106,7 @@ class MoodRecordController extends Controller
         Gate::allowIf(function (User $user) {
             return $user->role == 'student';
         });
-        $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', 'like', "$month-__")->get();
+        $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', 'like', "$month-__")->orderBy('recorded')->get();
         return $this->success(MoodRecordResource::collection($mood));
     }
 
@@ -160,19 +163,18 @@ class MoodRecordController extends Controller
             ->selectRaw('status, COUNT(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');
-
         return $this->success([
-            "neutral" => (int) $moods["neutral"],
-            "sad" => (int) $moods["sad"],
-            "happy" => (int) $moods["happy"],
-            "angry" => (int) $moods["angry"],
+            "neutral" => (int) ($moods["neutral"] ?? 0),
+            "sad"     => (int) ($moods["sad"] ?? 0),
+            "happy"   => (int) ($moods["happy"] ?? 0),
+            "angry"   => (int) ($moods["angry"] ?? 0),
         ]);
     }
 
     /**
      * Get mood history of the student
      * 
-     * Mendapatkan rekapitulasi rekam mood siswa berdasarkan username siswa tersebut. Tersedia opsi bulanan dan mingguan (terakhir). Hanya bisa diakses oleh BK dari siswa tersebut
+     * Mendapatkan rekapitulasi rekam mood siswa berdasarkan username siswa tersebut. Tersedia opsi bulanan dan mingguan (terakhir). Hanya bisa diakses oleh BK maupun Wali dari siswa tersebut
      * @param string $type weekly | monthly
      * @response array{
      *   data: array{
@@ -198,7 +200,7 @@ class MoodRecordController extends Controller
     public function moodHistory(Request $request, User $user, string $type)
     {
         Gate::allowIf(function (User $authUser) use ($user) {
-            return $authUser->role == 'counselor' && $authUser->id === $user->counselor_id;
+            return ($authUser->role == 'counselor' && $authUser->id === $user->counselor_id) || $authUser->role == 'teacher' && $authUser->id === $user->mentor_id;
         });
         $request->validate(["type" => "required|in:weekly,monthly"]);
         $query = MoodRecord::where('user_id', $user->id);
@@ -215,7 +217,7 @@ class MoodRecordController extends Controller
             ]);
         }
 
-        $moods = $query->get();
+        $moods = $query->orderBy('recorded')->get();
         // count by status
         $recap = $moods
             ->groupBy('status')

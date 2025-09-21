@@ -69,6 +69,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User::class, 'counselor_id', 'id')->where('role', 'student');
     }
+    public function mentored()
+    {
+        return $this->hasMany(User::class, 'mentor_id', 'id')->where('role', 'student');
+    }
 
     public function sharing()
     {
@@ -87,6 +91,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function lastmoodres()
     {
-        return $this->hasOne(MoodRecord::class)->latestOfMany('recorded');
+        return $this->hasOne(MoodRecord::class)->whereRecorded(now()->toDateString());
     }
 }

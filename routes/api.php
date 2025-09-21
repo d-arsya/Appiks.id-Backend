@@ -55,8 +55,10 @@ Route::middleware('auth:api')->group(function () {
     });
     Route::prefix('dashboard')->group(function () {
         Route::get('student', [UserController::class, 'getStudents']);
+        Route::post('users', [UserController::class, 'store']);
         Route::get('users', [UserController::class, 'getUsers']);
         Route::get('users/{username}', [UserController::class, 'getUserDetail']);
+        Route::get('users/type/{type}', [UserController::class, 'getUsersByType'])->whereIn('type', ['student', 'teacher', 'counselor', 'headteacher']);
         Route::get('user-count/{type}', [UserController::class, 'getUserCount'])->whereIn('type', ['student', 'teacher', 'counselor']);
         Route::get('report-count', [ReportController::class, 'getReportCount']);
         Route::get('room-count', [RoomController::class, 'getRoomCount']);
