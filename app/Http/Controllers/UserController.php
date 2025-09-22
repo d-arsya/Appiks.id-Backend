@@ -9,6 +9,7 @@ use App\Imports\UsersImport;
 use App\Imports\UsersImportSync;
 use App\Models\User;
 use App\Traits\ApiResponder;
+use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,27 @@ class UserController extends Controller
         $role = $role == 'teacher' ? 'mentor' : 'counselor';
         $students = User::with(['room', 'mentor', 'lastmoodres'])->whereRole('student')->where($role . '_id', Auth::id())->get();
         return $this->success(UserResource::collection($students));
+    }
+    /**
+     * Get latest 3 user
+     */
+    #[Group('Dashboard')]
+    public function getLatestUser()
+    {
+        $users = Auth::user()->school->users()
+            ->latest()
+            ->limit(3)
+            ->get();
+        return $this->success(UserResource::collection($users));
+    }
+    /**
+     * Get user count created today
+     */
+    #[Group('Dashboard')]
+    public function getTodayUser()
+    {
+        $users = Auth::user()->school->users()->whereDate('created_at', now())->count();
+        return $this->success(["count" => (int)$users]);
     }
     /**
      * Create new user at the school

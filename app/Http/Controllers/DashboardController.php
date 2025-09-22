@@ -93,4 +93,38 @@ class DashboardController extends Controller
             'sharing_today_count' => (int) $sharing_today_count,
         ]);
     }
+    /**
+     * Dashboard admin datas
+     * 
+     * Mendapatkan data hitungan yang diperlukan di dashboard Admin TU
+     */
+    #[Group('Dashboard')]
+    public function admin()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'admin';
+        });
+        $school = Auth::user()->school;
+
+        // Total user
+        $users_count = $school->users()->count();
+
+        // Total video & artikel
+        $videos_count   = $school->videos()->count();
+        $articles_count = $school->articles()->count();
+
+        // Total konten hari ini
+        $content_today_count = $school->videos()
+            ->whereDate('created_at', now())
+            ->count()
+            + $school->articles()
+            ->whereDate('created_at', now())
+            ->count();
+
+        return $this->success([
+            'users_count'        => $users_count,
+            'content_count'      => $videos_count + $articles_count,
+            'content_today_count' => $content_today_count,
+        ]);
+    }
 }

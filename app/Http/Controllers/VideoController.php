@@ -11,6 +11,7 @@ use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 
@@ -31,6 +32,53 @@ class VideoController extends Controller
         shuffle($contents);
         return $this->success($contents);
     }
+    /**
+     * Get latest 3 contents
+     * 
+     * Mendapatkan 3 data video dan artikel terbaru di sekolah tersebut
+     */
+    #[Group('Dashboard')]
+    public function getLatestContent()
+    {
+        $schoolId = Auth::user()->school_id;
+
+        // Query video
+        $videosQuery = Video::select('id', 'title', 'created_at', DB::raw("'video' as type"))
+            ->where('school_id', $schoolId);
+
+        // Query artikel
+        $articlesQuery = Article::select('id', 'title', 'created_at', DB::raw("'article' as type"))
+            ->where('school_id', $schoolId)
+            ->union($videosQuery);
+
+        // Ambil 3 terbaru dari gabungan
+        $contents = DB::table(DB::raw("({$articlesQuery->toSql()}) as combined"))
+            ->mergeBindings($articlesQuery->getQuery())
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return $this->success($contents);
+    }
+    /**
+     * Get today created content
+     * 
+     * Mendapatkan jumlah konten yang dibuat hari ini
+     */
+    #[Group('Dashboard')]
+    public function getTodayContent()
+    {
+        $school = Auth::user()->school;
+        $count = $school->videos()
+            ->whereDate('created_at', now())
+            ->count()
+            + $school->articles()
+            ->whereDate('created_at', now())
+            ->count();
+
+        return $this->success(["count" => (int)$count]);
+    }
+
     /**
      * Get all video
      * 

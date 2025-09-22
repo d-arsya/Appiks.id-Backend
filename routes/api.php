@@ -63,6 +63,7 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('headteacher', [DashboardController::class, 'headteacher']);
         Route::get('teacher', [DashboardController::class, 'teacher']);
+        Route::get('admin', [DashboardController::class, 'admin']);
         Route::get('counselor', [DashboardController::class, 'counselor']);
         Route::get('student', [UserController::class, 'getStudents']);
         Route::post('users', [UserController::class, 'store']);
@@ -75,6 +76,10 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
         Route::get('mood-trends', [MoodRecordController::class, 'getMoodTrend']);
         Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
+        Route::get('latest-content', [VideoController::class, 'getLatestContent']);
+        Route::get('latest-user', [UserController::class, 'getLatestUser']);
+        Route::get('today-user', [UserController::class, 'getTodayUser']);
+        Route::get('today-countent', [VideoController::class, 'getTodayContent']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });
