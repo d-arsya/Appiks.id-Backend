@@ -62,20 +62,18 @@ Route::middleware('auth:api')->group(function () {
     });
     Route::prefix('dashboard')->group(function () {
         Route::get('teacher', [DashboardController::class, 'teacher']);
+        Route::get('counselor', [DashboardController::class, 'counselor']);
         Route::get('student', [UserController::class, 'getStudents']);
         Route::post('users', [UserController::class, 'store']);
         Route::get('users', [UserController::class, 'getUsers']);
         Route::get('users/{username}', [UserController::class, 'getUserDetail']);
         Route::get('users/type/{type}', [UserController::class, 'getUsersByType'])->whereIn('type', ['student', 'teacher', 'counselor', 'headteacher']);
-        Route::get('user-count/{type}', [UserController::class, 'getUserCount'])->whereIn('type', ['student', 'teacher', 'counselor']);
+        Route::get('sharing-count', [SharingController::class, 'getSharingCount']);
         Route::get('report-count', [ReportController::class, 'getReportCount']);
         Route::get('room-count', [RoomController::class, 'getRoomCount']);
-        Route::get('schedule-count', [ReportController::class, 'getScheduleCount']);
-        Route::get('sharing-count', [SharingController::class, 'getSharingCount']);
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
+        Route::get('mood-trends', [MoodRecordController::class, 'getMoodTrend']);
         Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
-        Route::get('mood-today-count', [MoodRecordController::class, 'getMoodTodayCount']);
-        Route::get('mood-today-count/{type}', [MoodRecordController::class, 'getMoodTodayCountByType'])->whereIn('type', ['secure', 'insecure']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });

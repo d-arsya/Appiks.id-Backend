@@ -68,31 +68,6 @@ class MoodRecordController extends Controller
             "streak" => $streak,
         ]);
     }
-    /**
-     * Get mood record today count
-     */
-    #[Group('Dashboard')]
-    public function getMoodTodayCount()
-    {
-        Gate::allowIf(function (User $user) {
-            return $user->role == 'teacher';
-        });
-        $count = MoodRecord::whereIn('user_id', User::where('mentor_id', Auth::id())->pluck('id'))->where('recorded', Carbon::today())->count();
-        return $this->success(["count" => (int) $count]);
-    }
-    /**
-     * Get mood record today count by type
-     */
-    #[Group('Dashboard')]
-    public function getMoodTodayCountByType(Request $request, string $type)
-    {
-        Gate::allowIf(function (User $user) {
-            return $user->role == 'teacher';
-        });
-        $types = $type == 'secure' ? ['happy', 'neutral'] : ['sad', 'angry'];
-        $count = MoodRecord::whereIn('status', $types)->whereIn('user_id', User::where('mentor_id', Auth::id())->pluck('id'))->where('recorded', Carbon::today())->count();
-        return $this->success(["count" => (int) $count]);
-    }
 
     /**
      * Get user mood recaps by month
@@ -151,6 +126,44 @@ class MoodRecordController extends Controller
         $message = $moodResponses[$status][array_rand($moodResponses[$status])];
         return $this->created(["status" => $status, "pesan" => $message], 'Success record mood');
     }
+
+    /**
+     * Get mood trends a year
+     */
+    #[Group('Dashboard')]
+    public function getMoodTrend()
+    {
+        Gate::authorize('dashboard-data');
+
+        $moods = MoodRecord::selectRaw('MONTH(recorded) as month, status, COUNT(*) as total')
+            ->groupBy('month', 'status')
+            ->orderBy('month')
+            ->get();
+
+        // group per bulan
+        $grouped = $moods->groupBy('month');
+
+        $result = [];
+
+        foreach ($grouped as $month => $items) {
+            // ambil status dengan jumlah terbesar
+            $top = $items->sortByDesc('total')->first();
+
+            $result[$this->monthName($month)] = [
+                'status' => $top->status,
+                'total'  => (int) $top->total,
+            ];
+        }
+
+        return $this->success($result);
+    }
+
+    private function monthName($month)
+    {
+        return \Carbon\Carbon::create()->month($month)->format('F'); // ex: "January"
+        // atau 'M' kalau mau singkat: "Jan"
+    }
+
 
     /**
      * Get mood count graph

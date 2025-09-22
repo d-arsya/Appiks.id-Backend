@@ -8,6 +8,7 @@ use App\Http\Resources\SharingResource;
 use App\Models\Sharing;
 use App\Models\User;
 use App\Traits\ApiResponder;
+use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -34,6 +35,31 @@ class SharingController extends Controller
             $sharings = Sharing::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }
         return $this->success(SharingResource::collection($sharings));
+    }
+
+    /**
+     * Get sharing count by types
+     * 
+     * Mendapatkan jumlah curhatan hari itu berdasarkan tipe. Hanya bisa diakses oleh BK
+     */
+    #[Group('Sharing')]
+    public function getSharingCount()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'counselor';
+        });
+        $user = Auth::user();
+        $sharings = Sharing::whereDate('created_at', Carbon::today())
+            ->whereIn('user_id', $user->counselored->pluck('id'));
+
+        $received = (clone $sharings)->whereNull('reply')->count();
+        $replied  = (clone $sharings)->whereNotNull('reply')->count();
+
+        return $this->success([
+            "received" => $received,
+            "replied"  => $replied,
+            "total"    => $replied + $received,
+        ]);
     }
 
     /**
@@ -72,16 +98,5 @@ class SharingController extends Controller
     {
         $sharing->update($request->all());
         return $this->success(new SharingResource($sharing));
-    }
-
-    /**
-     * Get sharing count
-     */
-    #[Group('Dashboard')]
-    public function getSharingCount()
-    {
-        Gate::authorize('dashboard-data');
-        $count = Sharing::whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
-        return $this->success(["count" => (int) $count]);
     }
 }

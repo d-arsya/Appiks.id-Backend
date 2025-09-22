@@ -9,6 +9,7 @@ use App\Http\Resources\ReportResource;
 use App\Models\Report;
 use App\Models\Sharing;
 use App\Traits\ApiResponder;
+use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,6 +34,29 @@ class ReportController extends Controller
             $reports = Report::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }
         return $this->success(ReportResource::collection($reports));
+    }
+
+    /**
+     * Get report today count
+     * 
+     * Mendapatkan data jumlah konseling berdasarkan tipenya
+     */
+    #[Group('Report')]
+    public function getReportCount()
+    {
+        $user = Auth::user();
+        $reports = Report::whereCreatedAt(Carbon::today())->whereIn('user_id', $user->counselored->pluck('id'))->get();
+
+        $countsByStatus = $reports->countBy('status');
+        $countsByStatusArray = $reports->countBy('status')->toArray();
+
+
+        return $this->success([
+            "dijadwalkan" => (int) ($countsByStatusArray["dijadwalkan"] ?? 0),
+            "menunggu" => (int) ($countsByStatusArray["menunggu"] ?? 0),
+            "selesai" => (int) ($countsByStatusArray["selesai"] ?? 0),
+            "dibatalkan" => (int) ($countsByStatusArray["dibatalkan"] ?? 0),
+        ]);
     }
 
     /**
@@ -97,27 +121,6 @@ class ReportController extends Controller
     {
         $report->update(["result" => $request->result, "status" => "dibatalkan"]);
         return $this->created(new ReportResource($report));
-    }
-
-    /**
-     * Get waiting report count
-     */
-    #[Group('Dashboard')]
-    public function getReportCount()
-    {
-        Gate::authorize('dashboard-data');
-        $count = Report::whereStatus('menunggu')->whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
-        return $this->success(["count" => (int) $count]);
-    }
-    /**
-     * Get scheduled report count today
-     */
-    #[Group('Dashboard')]
-    public function getScheduleCount()
-    {
-        Gate::authorize('dashboard-data');
-        $count = Report::where('date', now()->toDateString())->whereStatus('disetujui')->whereIn('user_id', Auth::user()->counselored->pluck('id'))->count();
-        return $this->success(["count" => (int) $count]);
     }
     /**
      * Get report and sharing count graph
