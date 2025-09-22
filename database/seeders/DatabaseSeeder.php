@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             QuestionnaireSeeder::class,
             TagSeeder::class,
             VideoSeeder::class,
+            ArticleSeeder::class,
             MoodRecordSeeder::class,
             ReportSeeder::class,
             SharingSeeder::class,

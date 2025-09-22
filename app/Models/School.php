@@ -41,6 +41,10 @@ class School extends Model
     {
         return $this->hasMany(Video::class);
     }
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
     public function quotes()
     {
         return $this->hasMany(Quote::class);

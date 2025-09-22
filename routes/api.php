@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\QuoteController;
@@ -10,6 +12,7 @@ use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
+use App\Models\Article;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,14 +29,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('mood_record/today', [MoodRecordController::class, 'today']);
     Route::get('mood_record/streaks', [MoodRecordController::class, 'streaks']);
     Route::get('questionnaire', [QuestionnaireController::class, 'getAllQuestionnaires']);
+    Route::get('content', [VideoController::class, 'allContents']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
+    Route::get('article/tag/{tag}', [ArticleController::class, 'getByTag']);
     Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
+    Route::get('article/{article:slug}', [ArticleController::class, 'getArticle']);
     Route::apiResource('video', VideoController::class)->except(['show']);
+    Route::apiResource('article', ArticleController::class)->except(['show']);
     Route::get('quote/mood', [QuoteController::class, 'getByType']);
     Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
@@ -54,6 +61,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report/{report}', 'view');
     });
     Route::prefix('dashboard')->group(function () {
+        Route::get('teacher', [DashboardController::class, 'teacher']);
         Route::get('student', [UserController::class, 'getStudents']);
         Route::post('users', [UserController::class, 'store']);
         Route::get('users', [UserController::class, 'getUsers']);

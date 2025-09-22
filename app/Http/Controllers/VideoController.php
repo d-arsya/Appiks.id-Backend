@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateVideoRequest;
 use App\Http\Resources\VideoResource;
+use App\Models\Article;
 use App\Models\Tag;
-use App\Models\User;
 use App\Models\Video;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
@@ -17,6 +17,20 @@ use Illuminate\Support\Facades\Http;
 class VideoController extends Controller
 {
     use ApiResponder;
+    /**
+     * Get all contents
+     * 
+     * Mendapatkan semua data video dan artikel di sekolah tersebut
+     */
+    #[Group('Content')]
+    public function allContents()
+    {
+        $videos = Video::with('tags')->where('school_id', Auth::user()->school_id)->get()->toArray();
+        $articles = Article::with('tags')->where('school_id', Auth::user()->school_id)->get()->toArray();
+        $contents = array_merge($videos, $articles);
+        shuffle($contents);
+        return $this->success($contents);
+    }
     /**
      * Get all video
      * 

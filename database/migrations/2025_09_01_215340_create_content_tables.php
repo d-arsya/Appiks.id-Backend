@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Article;
 use App\Models\School;
 use App\Models\Tag;
 use App\Models\Video;
@@ -26,6 +27,16 @@ return new class extends Migration
             $table->string('video_id');
             $table->timestamps();
         });
+        Schema::create('articles', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(School::class);
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->string('thumbnail');
+            $table->longText('content');
+            $table->timestamps();
+        });
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('title');
@@ -33,6 +44,11 @@ return new class extends Migration
         Schema::create('video_tag', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Video::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Tag::class)->constrained()->onDelete('cascade');
+        });
+        Schema::create('article_tag', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Article::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(Tag::class)->constrained()->onDelete('cascade');
         });
     }
