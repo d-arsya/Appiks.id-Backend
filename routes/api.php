@@ -61,6 +61,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report/{report}', 'view');
     });
     Route::prefix('dashboard')->group(function () {
+        Route::get('headteacher', [DashboardController::class, 'headteacher']);
         Route::get('teacher', [DashboardController::class, 'teacher']);
         Route::get('counselor', [DashboardController::class, 'counselor']);
         Route::get('student', [UserController::class, 'getStudents']);

@@ -17,6 +17,34 @@ class DashboardController extends Controller
 {
     use ApiResponder;
     /**
+     * Dashboard headteacher datas
+     * 
+     * Mendapatkan data hitungan yang diperlukan di dashboard guru kepala sekolah
+     */
+    #[Group('Dashboard')]
+    public function headteacher()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'headteacher';
+        });
+        $school = Auth::user()->school;
+
+        // Hitung user per role langsung di database
+        $student_count   = $school->users()->whereRole('student')->count();
+        $teacher_count   = $school->users()->whereRole('teacher')->count();
+        $counselor_count = $school->users()->whereRole('counselor')->count();
+
+        // Hitung jumlah room langsung di query
+        $room_count = $school->rooms()->count();
+
+        return $this->success([
+            'student_count'   => $student_count,
+            'teacher_count'   => $teacher_count,
+            'counselor_count' => $counselor_count,
+            'room_count'      => $room_count,
+        ]);
+    }
+    /**
      * Dashboard teacher datas
      * 
      * Mendapatkan data hitungan yang diperlukan di dashboard guru wali
