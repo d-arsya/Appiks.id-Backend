@@ -28,11 +28,21 @@ class SharingSeeder extends Seeder
                 ->values();
 
             foreach ($dates as $date) {
-                // ambil atribut default dari factory (raw) lalu override user_id + tanggal
                 $attrs = Sharing::factory()->raw();
 
                 $attrs['user_id'] = $student->id;
-                // pastikan format datetime yang diterima MySQL
+                $attrs['user_id'] = $student->id;
+                $attrs['created_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
+                $attrs['updated_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
+
+                $all[] = $attrs;
+                $attrs = Sharing::factory()->raw();
+
+                $attrs['reply'] = null;
+                $attrs['replied_by'] = null;
+                $attrs['replied_at'] = null;
+                $attrs['user_id'] = $student->id;
+                $attrs['user_id'] = $student->id;
                 $attrs['created_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
                 $attrs['updated_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
 
