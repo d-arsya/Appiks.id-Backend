@@ -32,7 +32,7 @@ class ReportController extends Controller
         if ($user->role == 'student') {
             $reports = $user->report()->with(['counselor', 'user'])->orderBy('date')->get();
         } else if ($user->role == 'counselor') {
-            $reports = Report::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
+            $reports = Report::with(['counselor', 'user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }
         return $this->success(ReportResource::collection($reports));
     }
