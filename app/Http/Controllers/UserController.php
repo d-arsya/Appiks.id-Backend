@@ -67,7 +67,7 @@ class UserController extends Controller
     #[Group('User')]
     public function getUsers()
     {
-        $users = User::whereSchoolId(Auth::user()->school_id)->get();
+        $users = User::with(['room', 'mentor'])->whereSchoolId(Auth::user()->school_id)->get();
         return $this->success(UserResource::collection($users));
     }
     /**
