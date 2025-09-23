@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CloseReportRequest;
 use App\Http\Requests\ConfirmReportRequest;
 use App\Http\Requests\CreateReportRequest;
+use App\Http\Requests\RescheduleReportRequest;
 use App\Http\Resources\ReportResource;
 use App\Models\Report;
 use App\Models\Sharing;
@@ -95,11 +96,9 @@ class ReportController extends Controller
      * Reschedule report meeting
      */
     #[Group('Report')]
-    public function reschedule(ConfirmReportRequest $request, Report $report)
+    public function reschedule(RescheduleReportRequest $request, Report $report)
     {
-        $data = $request->all();
-        $data["status"] = "dijadwalkan";
-        $report->update($data);
+        $report->update($request->all());
         return $this->created(new ReportResource($report));
     }
 

@@ -12,7 +12,7 @@ class CloseReportRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('update', $this->report);
+        return Gate::allows('update', $this->report) && in_array($this->report->status, ['disetujui', 'dijadwalkan']);
     }
 
     /**
