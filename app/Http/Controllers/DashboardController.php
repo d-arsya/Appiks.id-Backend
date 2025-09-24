@@ -150,9 +150,14 @@ class DashboardController extends Controller
         $quotes = Quote::select('id as ids', 'text as title', DB::raw("'quote' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
-        $contents = $videos
+        $union = $videos
             ->union($articles)
-            ->union($quotes)->get();
+            ->union($quotes);
+
+        $contents = DB::query()
+            ->fromSub($union, 'contents')
+            ->orderBy('created_at', 'desc')
+            ->get();
         return $this->success($contents);
     }
 }
