@@ -83,6 +83,8 @@ class ArticleController extends Controller
 
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $data['thumbnail'] = env('APP_URL') . Storage::url($path);
+        } else {
+            unset($data["thumbnail"]);
         }
 
         // update article
