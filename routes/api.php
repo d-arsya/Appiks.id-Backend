@@ -40,7 +40,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('user/bulk', [UserController::class, 'bulkCreate']);
     Route::patch('profile', [UserController::class, 'profile']);
-    Route::patch('edit-user/{role}/{user:username}', [UserController::class, 'edit'])->whereIn('role', ['student', 'teacher', 'headteacher', 'counselor']);
+    Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::delete('user/{user:username}', [UserController::class, 'destroy']);
     Route::apiResource('video', VideoController::class)->except(['show']);

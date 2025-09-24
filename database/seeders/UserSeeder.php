@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Room;
+use App\Models\School;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -14,94 +15,82 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $room = Room::first();
+        $rooms = Room::all();
+        $sch = $rooms[0]->school_id;
         $mentor = User::factory()->create([
-            "username" => "33333",
-            "identifier" => "33333",
+            "username" => "guruwali",
             "verified" => true,
             "role" => "teacher",
             "mentor_id" => null,
             "counselor_id" => null,
             "room_id" => null,
-            "school_id" => $room->school_id
-        ]);
-        User::factory()->create([
-            "username" => "55555",
-            "identifier" => "55555",
-            "verified" => true,
-            "role" => "super",
-            "counselor_id" => null,
-            "mentor_id" => null,
-            "room_id" => null,
-            "school_id" => $room->school_id
-        ]);
-        User::factory()->create([
-            "username" => "44444",
-            "identifier" => "44444",
-            "verified" => true,
-            "role" => "headteacher",
-            "mentor_id" => null,
-            "room_id" => null,
-            "counselor_id" => null,
-            "school_id" => $room->school_id
+            "school_id" => $sch
         ]);
         $counselor = User::factory()->create([
-            "username" => "22222",
-            "identifier" => "22222",
+            "username" => "gurubk",
             "verified" => true,
             "role" => "counselor",
             "mentor_id" => null,
             "room_id" => null,
             "counselor_id" => null,
-            "school_id" => $room->school_id
+            "school_id" => $sch
+        ]);
+        $con = $counselor->id;
+        $men = $mentor->id;
+        User::factory()->create([
+            "username" => "super",
+            "verified" => true,
+            "role" => "super",
+            "counselor_id" => null,
+            "mentor_id" => null,
+            "room_id" => null,
+            "school_id" => $sch
         ]);
         User::factory()->create([
-            "username" => "11111",
-            "identifier" => "11111",
+            "username" => "kepsek",
+            "verified" => true,
+            "role" => "headteacher",
+            "mentor_id" => null,
+            "room_id" => null,
+            "counselor_id" => null,
+            "school_id" => $sch
+        ]);
+        User::factory()->create([
+            "username" => "admintu",
             "verified" => true,
             "role" => "admin",
             "mentor_id" => null,
             "room_id" => null,
             "counselor_id" => null,
-            "school_id" => $room->school_id
+            "school_id" => $sch
         ]);
-        User::factory()->create([
-            "username" => "00000",
-            "identifier" => "00000",
-            "verified" => true,
-            "role" => "student",
-            "mentor_id" => $mentor->id,
-            "room_id" => $room->id,
-            "counselor_id" => $counselor->id,
-            "school_id" => $room->school_id
-        ]);
-        User::factory()->create([
-            "username" => "0000000000",
-            "identifier" => "0000000000",
-            "verified" => false,
-            "role" => "student",
-            "mentor_id" => $mentor->id,
-            "room_id" => $room->id,
-            "counselor_id" => $counselor->id,
-            "school_id" => $room->school_id
-        ]);
-        User::factory()->create([
-            "username" => "1111111111",
-            "identifier" => "1111111111",
-            "verified" => false,
-            "role" => "admin",
-            "mentor_id" => $mentor->id,
-            "room_id" => $room->id,
-            "counselor_id" => null,
-            "school_id" => $room->school_id
-        ]);
-        User::factory(20)->create([
-            "verified" => true,
-            "role" => "student",
-            "mentor_id" => $mentor->id,
-            "room_id" => $room->id,
-            "counselor_id" => $counselor->id,
-            "school_id" => $room->school_id
-        ]);
+        foreach ($rooms as $room) {
+            User::factory()->create([
+                "username" => "siswa{$room->id}active",
+                "verified" => true,
+                "role" => "student",
+                "mentor_id" => $men,
+                "room_id" => $room->id,
+                "counselor_id" => $con,
+                "school_id" => $sch
+            ]);
+            User::factory()->create([
+                "username" => "siswa{$room->id}",
+                "verified" => false,
+                "role" => "student",
+                "mentor_id" => $men,
+                "room_id" => $room->id,
+                "counselor_id" => $con,
+                "school_id" => $sch
+            ]);
+            User::factory(8)->create([
+                "verified" => true,
+                "role" => "student",
+                "mentor_id" => $men,
+                "room_id" => $room->id,
+                "counselor_id" => $con,
+                "school_id" => $sch
+            ]);
+        }
     }
 }

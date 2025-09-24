@@ -19,7 +19,7 @@ class MoodRecordSeeder extends Seeder
 
         // ambil rentang 2 bulan terakhir
         $dates = collect(
-            Carbon::today()->subMonths(2)->startOfDay()->daysUntil(Carbon::yesterday())
+            Carbon::today()->subDays(35)->startOfDay()->daysUntil(Carbon::yesterday())
         );
 
 
@@ -28,11 +28,12 @@ class MoodRecordSeeder extends Seeder
 
         foreach ($students as $student) {
             foreach ($dates as $date) {
+                $d = $date->copy()->setTime(rand(7, 20), rand(0, 59), rand(0, 59));
                 $attrs = MoodRecord::factory()->raw([
                     "user_id"  => $student->id,
                     "recorded" => $date->format('Y-m-d'),
-                    "created_at" => $date->copy()->setTime(rand(7, 20), rand(0, 59), rand(0, 59)), // opsional: jam random
-                    "updated_at" => now(),
+                    "created_at" => $d,
+                    "updated_at" => $d,
                 ]);
 
                 $all[] = $attrs;

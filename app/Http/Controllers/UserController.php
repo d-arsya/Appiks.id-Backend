@@ -127,19 +127,20 @@ class UserController extends Controller
     /**
      * Edit user data (by admin)
      * 
-     * @param string $role student | teacher | headteacher | counselor.
+     * Kalau yang diedit adalah siswa maka butuh room_id. Selebihnya tidak
      */
     #[Group('User')]
-    public function edit(Request $request, string $role, User $user)
+    public function edit(Request $request, User $user)
     {
         Gate::allowIf(function (User $auth) use ($user) {
-            return $auth->role == 'admin' && $auth->school_id == $user->school_id;
+            return $auth->role == 'admin' && $auth->school_id == $user->school_id && !in_array($user->role, ['admin', 'super']);
         });
         if ($user->role == 'student') {
             $data = $request->validate([
                 "username" => "string|unique:users,username,{$user->id}",
                 "phone"    => "string|unique:users,phone,{$user->id}",
                 "identifier"    => "string|unique:users,identifier,{$user->id}",
+                "room_id"    => "string|exists:rooms,code",
                 "name"    => "string",
                 "password" => "nullable|string|min:8", // optional password
             ]);
