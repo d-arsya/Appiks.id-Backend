@@ -10,7 +10,9 @@ class Article extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $hidden = ["updated_at", "school_id"];
+
+    protected $hidden = ['updated_at', 'school_id'];
+
     protected $casts = [
         'content' => 'array',
     ];
@@ -19,6 +21,7 @@ class Article extends Model
     {
         return $this->belongsToMany(Tag::class, 'article_tag');
     }
+
     public function school()
     {
         return $this->belongsTo(School::class);

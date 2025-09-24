@@ -25,14 +25,14 @@ class CreateVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "tags" => "array",
-            "tags.*" => "integer|exists:tags,id",
-            "video_id" => "string"
+            'tags' => 'array',
+            'tags.*' => 'integer|exists:tags,id',
+            'video_id' => 'string',
         ];
     }
 
     protected function passedValidation()
     {
-        $this->merge(["school_id" => Auth::user()->school_id]);
+        $this->merge(['school_id' => Auth::user()->school_id]);
     }
 }

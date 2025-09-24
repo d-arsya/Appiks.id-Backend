@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ReportSeeder extends Seeder
@@ -21,19 +20,19 @@ class ReportSeeder extends Seeder
         foreach ($students as $student) {
             // ambil 10 tanggal unik acak dalam 30 hari terakhir
             $dates = collect(range(0, 35))
-                ->map(fn($i) => Carbon::yesterday()->subDays($i))
+                ->map(fn ($i) => Carbon::yesterday()->subDays($i))
                 ->shuffle()
                 ->take(10)
                 ->values();
 
             foreach ($dates as $date) {
                 $attrs = Report::factory()->raw([
-                    "counselor_id" => $student->counselor_id,
-                    "user_id" => $student->id,
-                    "date"    => $date->format('Y-m-d'),
-                    "room" => "Ruang BK 1",
-                    "created_at"    => $date->format('Y-m-d H:i:s'),
-                    "updated_at"    => $date->format('Y-m-d H:i:s'),
+                    'counselor_id' => $student->counselor_id,
+                    'user_id' => $student->id,
+                    'date' => $date->format('Y-m-d'),
+                    'room' => 'Ruang BK 1',
+                    'created_at' => $date->format('Y-m-d H:i:s'),
+                    'updated_at' => $date->format('Y-m-d H:i:s'),
                 ]);
 
                 $all[] = $attrs;

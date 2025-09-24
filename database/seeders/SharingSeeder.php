@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Sharing;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +21,7 @@ class SharingSeeder extends Seeder
         foreach ($students as $student) {
             // 5 tanggal unik acak dalam 30 hari terakhir
             $dates = collect(range(0, 35))
-                ->map(fn($i) => Carbon::yesterday()->subDays($i))
+                ->map(fn ($i) => Carbon::yesterday()->subDays($i))
                 ->shuffle()
                 ->take(3)
                 ->values();

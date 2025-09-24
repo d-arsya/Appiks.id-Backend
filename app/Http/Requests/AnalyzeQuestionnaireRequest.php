@@ -23,8 +23,8 @@ class AnalyzeQuestionnaireRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "answers" => "array|max:10",
-            "answers.*" => "string",
+            'answers' => 'array|max:10',
+            'answers.*' => 'string',
         ];
     }
 }

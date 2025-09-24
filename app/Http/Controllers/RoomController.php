@@ -6,7 +6,6 @@ use App\Http\Resources\RoomResource;
 use App\Models\Room;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -16,7 +15,7 @@ class RoomController extends Controller
 
     /**
      * Get room count
-     * 
+     *
      * Digunakan untuk mendapatkan jumlah kelas didalam sekolah user tersebut. Bisa diakses oleh selain murid
      */
     #[Group('Room')]
@@ -24,12 +23,13 @@ class RoomController extends Controller
     {
         Gate::authorize('dashboard-data');
         $count = Room::where('school_id', Auth::user()->school_id)->count();
-        return $this->success(["count" => (int) $count]);
+
+        return $this->success(['count' => (int) $count]);
     }
 
     /**
      * Get all rooms data
-     * 
+     *
      * Digunakan untuk mendapatkan jumlah kelas didalam sekolah user tersebut. Bisa diakses oleh selain murid
      */
     #[Group('Room')]
@@ -37,6 +37,7 @@ class RoomController extends Controller
     {
         Gate::authorize('dashboard-data');
         $rooms = Room::where('school_id', Auth::user()->school_id)->get();
+
         return $this->success(RoomResource::collection($rooms));
     }
 }

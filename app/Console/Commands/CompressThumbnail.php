@@ -50,7 +50,7 @@ class CompressThumbnail extends Command
                 $disk->delete($newFile);
             }
             $disk->put($newFile, $response->body());
-            $article->thumbnail = $ap . "/storage/" . $newFile;
+            $article->thumbnail = $ap.'/storage/'.$newFile;
             $article->save();
             $disk->delete($filepath);
         }

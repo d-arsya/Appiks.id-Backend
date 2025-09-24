@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Sharing;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ReplySharingRequest extends FormRequest
@@ -14,7 +12,7 @@ class ReplySharingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Gate::allows('update', $this->sharing) && !$this->sharing->reply;
+        return Gate::allows('update', $this->sharing) && ! $this->sharing->reply;
     }
 
     /**
@@ -25,7 +23,7 @@ class ReplySharingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "text" => "string"
+            'text' => 'string',
         ];
     }
 
@@ -34,7 +32,7 @@ class ReplySharingRequest extends FormRequest
         $this->replace(array_merge(
             $this->except('text'), // hapus key text
             [
-                'reply'      => $this->text,
+                'reply' => $this->text,
                 'replied_at' => now()->toDateString(),
                 'replied_by' => auth()->user()->name,
             ]

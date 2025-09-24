@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Article;
 use App\Models\School;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
@@ -17,7 +16,7 @@ class ArticleSeeder extends Seeder
         $school = School::first();
 
         $articles = Article::factory(10)->create([
-            "school_id" => $school->id,
+            'school_id' => $school->id,
         ]);
 
         foreach ($articles as $article) {

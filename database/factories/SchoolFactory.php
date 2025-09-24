@@ -16,10 +16,11 @@ class SchoolFactory extends Factory
      */
     public function definition(): array
     {
-        $variants = fake()->randomElement(["SD", "SMP", "SMA", "MI", "MTS", "MA"]);
-        $name = $variants . " " . fake()->name();
+        $variants = fake()->randomElement(['SD', 'SMP', 'SMA', 'MI', 'MTS', 'MA']);
+        $name = $variants.' '.fake()->name();
+
         return [
-            "name" => $name
+            'name' => $name,
         ];
     }
 }

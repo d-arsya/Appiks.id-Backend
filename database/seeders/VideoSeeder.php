@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\School;
 use App\Models\Video;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class VideoSeeder extends Seeder
@@ -17,7 +16,7 @@ class VideoSeeder extends Seeder
         $school = School::first();
 
         $videos = Video::factory(10)->create([
-            "school_id" => $school->id,
+            'school_id' => $school->id,
         ]);
 
         foreach ($videos as $video) {

@@ -10,8 +10,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 class NotAccept extends Exception
 {
     use ApiResponder;
+
     public function __invoke(AccessDeniedHttpException $e, Request $request)
     {
-        return $this->error("Unauthorized", 403, null);
+        return $this->error('Unauthorized', 403, null);
     }
 }

@@ -25,17 +25,17 @@ class CreateSharingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => "string|max:100",
-            "description" => "string"
+            'title' => 'string|max:100',
+            'description' => 'string',
         ];
     }
 
     protected function passedValidation()
     {
         $this->merge([
-            "user_id" => Auth::id(),
-            "replied_by" => Auth::user()->counselor->name,
-            "priority" => "rendah"
+            'user_id' => Auth::id(),
+            'replied_by' => Auth::user()->counselor->name,
+            'priority' => 'rendah',
         ]);
     }
 }

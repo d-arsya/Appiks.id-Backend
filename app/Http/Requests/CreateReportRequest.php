@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\Report;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -27,23 +26,24 @@ class CreateReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "date" => "required|date_format:Y-m-d",
+            'date' => 'required|date_format:Y-m-d',
             /**
              * @var string
+             *
              * @example 10:10
              */
-            'time' => Rule::date()->format("H:i"),
-            "topic" => "required|string",
-            "room" => "required|string",
+            'time' => Rule::date()->format('H:i'),
+            'topic' => 'required|string',
+            'room' => 'required|string',
         ];
     }
 
     protected function passedValidation()
     {
         $this->merge([
-            "user_id" => Auth::id(),
-            "counselor_id" => Auth::user()->counselor_id,
-            "priority" => Auth::user()->lastmood() == "angry" ? "tinggi" : "rendah"
+            'user_id' => Auth::id(),
+            'counselor_id' => Auth::user()->counselor_id,
+            'priority' => Auth::user()->lastmood() == 'angry' ? 'tinggi' : 'rendah',
         ]);
     }
 }

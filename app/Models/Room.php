@@ -8,13 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Room extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
-    protected $hidden = ["created_at", "updated_at"];
+
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function school()
     {
         return $this->belongsTo(School::class);
     }
+
     public function students()
     {
         return $this->hasMany(User::class)->where('role', 'student');

@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Sharing extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
-    protected $hidden = ["updated_at"];
+
+    protected $hidden = ['updated_at'];
 
     public function user()
     {

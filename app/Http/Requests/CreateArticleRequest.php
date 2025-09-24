@@ -15,7 +15,7 @@ class CreateArticleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return  Gate::allows('create', Article::class);
+        return Gate::allows('create', Article::class);
     }
 
     /**
@@ -27,11 +27,11 @@ class CreateArticleRequest extends FormRequest
     {
         return [
             // "tags" => "array",
-            "tags.*" => "integer|exists:tags,id",
-            "title"       => ["required", "string", "max:255"],
-            "description" => ["string"],
-            "thumbnail"   => ["image", "mimes:jpeg,png,jpg,gif,webp", "max:10000"],
-            "content"     => ["required", "json"],
+            'tags.*' => 'integer|exists:tags,id',
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['string'],
+            'thumbnail' => ['image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10000'],
+            'content' => ['required', 'json'],
         ];
     }
 
@@ -43,9 +43,9 @@ class CreateArticleRequest extends FormRequest
         $uniquePart = substr((string) Str::uuid(), 0, 4);
 
         $this->merge([
-            "school_id" => Auth::user()->school_id,
-            "slug"      => $baseSlug . '-' . $uniquePart,
-            "tags"      => (array) $this->input('tags', []),
+            'school_id' => Auth::user()->school_id,
+            'slug' => $baseSlug.'-'.$uniquePart,
+            'tags' => (array) $this->input('tags', []),
         ]);
     }
 }

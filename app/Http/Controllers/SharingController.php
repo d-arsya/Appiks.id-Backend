@@ -19,7 +19,7 @@ class SharingController extends Controller
 
     /**
      * Get all sharing data
-     * 
+     *
      * Mendapatkan semua data curhatan milik siswa tersebut atau siswa yang dibawahi oleh BK tersebut. Hanya bisa diakses oleh BK dan siswa
      */
     #[Group('Sharing')]
@@ -31,15 +31,16 @@ class SharingController extends Controller
         $user = Auth::user();
         if ($user->role == 'student') {
             $sharings = $user->sharing()->with(['user'])->orderBy('replied_at')->get();
-        } else if ($user->role == 'counselor') {
+        } elseif ($user->role == 'counselor') {
             $sharings = Sharing::with(['user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }
+
         return $this->success(SharingResource::collection($sharings));
     }
 
     /**
      * Get sharing count by types
-     * 
+     *
      * Mendapatkan jumlah curhatan hari itu berdasarkan tipe. Hanya bisa diakses oleh BK
      */
     #[Group('Sharing')]
@@ -53,30 +54,31 @@ class SharingController extends Controller
             ->whereIn('user_id', $user->counselored->pluck('id'));
 
         $received = (clone $sharings)->whereNull('reply')->count();
-        $replied  = (clone $sharings)->whereNotNull('reply')->count();
+        $replied = (clone $sharings)->whereNotNull('reply')->count();
 
         return $this->success([
-            "received" => $received,
-            "replied"  => $replied,
-            "total"    => $replied + $received,
+            'received' => $received,
+            'replied' => $replied,
+            'total' => $replied + $received,
         ]);
     }
 
     /**
      * Create new sharing
-     * 
+     *
      * Membuat curhatan baru dan hanya bisa dilakukan oleh siswa. Secara default prioritasnya adalah rendah
      */
     #[Group('Sharing')]
     public function store(CreateSharingRequest $request)
     {
         $sharing = Sharing::create($request->all());
+
         return $this->created(new SharingResource($sharing));
     }
 
     /**
      * Get sharing detail
-     * 
+     *
      * Mendapatkan detail curhatan. Hanya bisa diakses oleh murid atau BK dari murid tersebut
      */
     #[Group('Sharing')]
@@ -85,18 +87,20 @@ class SharingController extends Controller
         Gate::allowIf(function (User $authUser) use ($sharing) {
             return ($authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id) || $authUser->role == 'student' && $authUser->id === $sharing->user_id;
         });
+
         return $this->success(new SharingResource($sharing));
     }
 
     /**
      * Reply to the sharing
-     * 
+     *
      * Membalas curhatan siswa dan hanya bisa dilakukan oleh Guru BK siswa tersebut
      */
     #[Group('Sharing')]
     public function reply(ReplySharingRequest $request, Sharing $sharing)
     {
         $sharing->update($request->all());
+
         return $this->success(new SharingResource($sharing));
     }
 }

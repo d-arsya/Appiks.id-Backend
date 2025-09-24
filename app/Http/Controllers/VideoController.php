@@ -10,7 +10,6 @@ use App\Models\Video;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -19,9 +18,10 @@ use Illuminate\Support\Facades\Http;
 class VideoController extends Controller
 {
     use ApiResponder;
+
     /**
      * Get all contents
-     * 
+     *
      * Mendapatkan semua data video dan artikel di sekolah tersebut
      */
     #[Group('Content')]
@@ -34,6 +34,7 @@ class VideoController extends Controller
             ->get()
             ->map(function ($v) {
                 $v->content_type = 'video';
+
                 return $v;
             });
 
@@ -42,16 +43,19 @@ class VideoController extends Controller
             ->get()
             ->map(function ($a) {
                 $a->content_type = 'article';
+
                 return $a;
             });
 
         $contents = $videos->concat($articles);
         $contents = $contents->sortByDesc('created_at')->values();
+
         return $this->success($contents);
     }
+
     /**
      * Get latest 3 contents
-     * 
+     *
      * Mendapatkan 3 data video dan artikel terbaru di sekolah tersebut
      */
     #[Group('Content')]
@@ -77,9 +81,10 @@ class VideoController extends Controller
 
         return $this->success($contents);
     }
+
     /**
      * Get today created content
-     * 
+     *
      * Mendapatkan jumlah konten yang dibuat hari ini
      */
     #[Group('Content')]
@@ -90,38 +95,41 @@ class VideoController extends Controller
             ->whereDate('created_at', now())
             ->count()
             + $school->articles()
-            ->whereDate('created_at', now())
-            ->count();
+                ->whereDate('created_at', now())
+                ->count();
 
-        return $this->success(["count" => (int)$count]);
+        return $this->success(['count' => (int) $count]);
     }
 
     /**
      * Get all video
-     * 
+     *
      * Mendapatkan semua data video di sekolah tersebut
      */
     #[Group('Video')]
     public function index()
     {
         $videos = Video::with('tags')->where('school_id', Auth::user()->school_id)->get();
+
         return $this->success(VideoResource::collection($videos));
     }
+
     /**
      * Get all video by tag
-     * 
+     *
      * Mendapatkan semua video dengan tag tertentu di sekolah tersebut. Menggunakan id dari Tag
      */
     #[Group('Video')]
     public function getByTag(Tag $tag)
     {
         $videos = $tag->videos()->with('tags')->where('school_id', Auth::user()->school_id)->get();
+
         return $this->success(VideoResource::collection($videos));
     }
 
     /**
      * Create new video
-     * 
+     *
      * Membuat sebuah video baru. Cukup mengirimkan ID youtube video dan sistem akan mengambil meta data yang dibutuhkan
      */
     #[Group('Video')]
@@ -129,16 +137,18 @@ class VideoController extends Controller
     {
         $meta = $this->getVideoDetail($request->video_id);
         $data = $request->all();
-        $tags = $data["tags"];
-        unset($data["tags"]);
+        $tags = $data['tags'];
+        unset($data['tags']);
         $video = Video::create(array_merge($data, $meta));
         $video->tags()->sync($tags);
         $res = Video::with(['school', 'tags'])->where('id', $video->id)->first();
+
         return $this->success(new VideoResource($res));
     }
+
     /**
      * Update video
-     * 
+     *
      * Mengupdate tag yang dimiliki oleh video tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Video')]
@@ -146,17 +156,18 @@ class VideoController extends Controller
     {
         Gate::authorize('update', $video);
         $request->validate([
-            "tags" => "array",
-            "tags.*" => "integer|exists:tags,id"
+            'tags' => 'array',
+            'tags.*' => 'integer|exists:tags,id',
         ]);
         $video->tags()->sync($request->tags);
         $res = Video::with(['school', 'tags'])->where('id', $video->id)->first();
+
         return $this->success(new VideoResource($res));
     }
 
     /**
      * Delete video
-     * 
+     *
      * Menghapus konten video di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
     #[Group('Video')]
@@ -164,12 +175,13 @@ class VideoController extends Controller
     {
         Gate::authorize('delete', $video);
         $video->delete();
+
         return $this->delete();
     }
 
     /**
      * Get video detail
-     * 
+     *
      * Mendapatkan video detail berdasarkan ID Youtube
      */
     #[Group('Video')]
@@ -178,6 +190,7 @@ class VideoController extends Controller
         Gate::authorize('view', $video);
         $data = $this->getVideoDetail($video->video_id);
         $video->update($data);
+
         return $this->success(new VideoResource($video));
     }
 
@@ -185,23 +198,23 @@ class VideoController extends Controller
     {
         $html = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0',
-        ])->get("https://www.youtube.com/watch?v=" . $id)->body();
+        ])->get('https://www.youtube.com/watch?v='.$id)->body();
         $data = [];
 
         // --- 1) Extract ytInitialPlayerResponse ---
         if (preg_match('/ytInitialPlayerResponse\s*=\s*({.*?});/s', $html, $m)) {
             $player = json_decode($m[1], true);
 
-            if (!empty($player['videoDetails'])) {
+            if (! empty($player['videoDetails'])) {
                 $video = $player['videoDetails'];
                 $data = [
-                    'video_id'      => $video['videoId'] ?? null,
-                    'title'         => $video['title'] ?? null,
-                    'description'   => $video['shortDescription'] ?? null,
-                    'thumbnail'    => end($video['thumbnail']['thumbnails'])["url"] ?? [],
-                    'duration'      => gmdate(($video['lengthSeconds'] >= 3600 ? "H:i:s" : "i:s"), $video['lengthSeconds']) ?? null, // in seconds
-                    'channel'  => $video['author'] ?? null,
-                    'views'  => $video['viewCount'] ?? null,
+                    'video_id' => $video['videoId'] ?? null,
+                    'title' => $video['title'] ?? null,
+                    'description' => $video['shortDescription'] ?? null,
+                    'thumbnail' => end($video['thumbnail']['thumbnails'])['url'] ?? [],
+                    'duration' => gmdate(($video['lengthSeconds'] >= 3600 ? 'H:i:s' : 'i:s'), $video['lengthSeconds']) ?? null, // in seconds
+                    'channel' => $video['author'] ?? null,
+                    'views' => $video['viewCount'] ?? null,
                 ];
             }
         }

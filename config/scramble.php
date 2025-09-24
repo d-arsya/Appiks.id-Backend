@@ -1,4 +1,5 @@
 <?php
+
 return [
     /*
      * Your API path. By default, all routes starting with this path will be added to the docs.
@@ -36,7 +37,7 @@ return [
         /*
          * Define the title of the documentation's website. App name is used when this config is `null`.
          */
-        'title' => "API Documentation - APPIKS.ID",
+        'title' => 'API Documentation - APPIKS.ID',
 
         /*
          * Define the theme of the documentation. Available options are `light` and `dark`.
@@ -86,7 +87,7 @@ return [
      * ],
      * ```
      */
-    'servers' => ['Live' => env('APP_URL') . '/api'],
+    'servers' => ['Live' => env('APP_URL').'/api'],
 
     /**
      * Determines how Scramble stores the descriptions of enum cases.

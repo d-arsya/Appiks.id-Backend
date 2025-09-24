@@ -2,8 +2,8 @@
 
 namespace App\Imports;
 
-use App\Models\User;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,13 +12,18 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, ShouldQueue
+class UsersImport implements ShouldQueue, ToCollection, WithChunkReading, WithHeadingRow
 {
     protected $mentors;
+
     protected $counselors;
+
     protected $rooms;
+
     protected $schoolId;
+
     protected $defaultPassword;
+
     protected $insertedUsers;
 
     public function __construct($schoolId)
@@ -26,7 +31,7 @@ class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, Sho
         // Preload teachers and rooms ONCE
         $this->mentors = User::where('role', 'teacher')->pluck('id', 'identifier')->toArray();
         $this->counselors = User::where('role', 'counselor')->pluck('id', 'identifier')->toArray();
-        $this->rooms   = Room::pluck('id', 'code')->toArray();
+        $this->rooms = Room::pluck('id', 'code')->toArray();
         $this->schoolId = $schoolId;
         $this->defaultPassword = Hash::make(config('app.default_password'));
         $this->insertedUsers = collect();
@@ -40,15 +45,15 @@ class UsersImport implements ToCollection, WithHeadingRow, WithChunkReading, Sho
                 break;
             }
             $users[] = [
-                'name'       => $row['nama'],
-                'username'   => $row['nis'],
+                'name' => $row['nama'],
+                'username' => $row['nis'],
                 'identifier' => $row['nis'],
-                'mentor_id'  => $this->mentors[$row['nip_wali']],
-                'counselor_id'  => $this->counselors[$row['nip_bk']],
-                'room_id'    => $this->rooms[$row['kode_kelas']],
-                'school_id'  => $this->schoolId,
-                'password'   => $this->defaultPassword,
-                'role'       => 'student',
+                'mentor_id' => $this->mentors[$row['nip_wali']],
+                'counselor_id' => $this->counselors[$row['nip_bk']],
+                'room_id' => $this->rooms[$row['kode_kelas']],
+                'school_id' => $this->schoolId,
+                'password' => $this->defaultPassword,
+                'role' => 'student',
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

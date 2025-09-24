@@ -17,33 +17,38 @@ use Illuminate\Support\Facades\Storage;
 class ArticleController extends Controller
 {
     use ApiResponder;
+
     /**
      * Get all articles
-     * 
+     *
      * Mendapatkan semua data artikel di sekolah tersebut
      */
     #[Group('Article')]
     public function index()
     {
         $articles = Article::with('tags')->where('school_id', Auth::user()->school_id)->get();
+
         return $this->success(ArticleResource::collection($articles));
     }
+
     /**
      * Get all article by tag
-     * 
+     *
      * Mendapatkan semua artikel dengan tag tertentu di sekolah tersebut. Menggunakan id dari Tag
      */
     #[Group('Article')]
     public function getByTag(Tag $tag)
     {
         $articles = $tag->articles()->with('tags')->where('school_id', Auth::user()->school_id)->get();
+
         return $this->success(ArticleResource::collection($articles));
     }
 
     /**
      * Create new article
-     * 
+     *
      * Membuat sebuah artikel baru
+     *
      * @bodyParam tags array<int> optional Daftar ID tag. Contoh: [1, 2, 3]
      */
     #[Group('Article')]
@@ -52,19 +57,21 @@ class ArticleController extends Controller
         $tags = $request->tags[0];
         $tags = array_map('intval', json_decode($tags));
         $data = $request->all();
-        unset($data["tags"]);
+        unset($data['tags']);
         $path = $request->file('thumbnail')->store('thumbnails', 'public');
-        $data['thumbnail'] = env('APP_URL') . Storage::url($path);
+        $data['thumbnail'] = env('APP_URL').Storage::url($path);
         $article = Article::create($data);
         $tags = Tag::whereIn('id', $tags)->pluck('id')->toArray();
         // return $tags;
         $article->tags()->sync($tags);
         $res = Article::with(['school', 'tags'])->where('id', $article->id)->first();
+
         return $this->success(new ArticleResource($res));
     }
+
     /**
      * Update article
-     * 
+     *
      * Mengupdate tag yang dimiliki oleh artikel tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Article')]
@@ -77,14 +84,14 @@ class ArticleController extends Controller
         if ($request->hasFile('thumbnail')) {
             // opsional: hapus file lama
             if ($article->thumbnail && str_contains($article->thumbnail, '/storage/')) {
-                $oldPath = str_replace(env('APP_URL') . '/storage/', '', $article->thumbnail);
+                $oldPath = str_replace(env('APP_URL').'/storage/', '', $article->thumbnail);
                 Storage::disk('public')->delete($oldPath);
             }
 
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
-            $data['thumbnail'] = env('APP_URL') . Storage::url($path);
+            $data['thumbnail'] = env('APP_URL').Storage::url($path);
         } else {
-            unset($data["thumbnail"]);
+            unset($data['thumbnail']);
         }
 
         // update article
@@ -92,7 +99,7 @@ class ArticleController extends Controller
 
         // update tags
         $tags = $request->tags;
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             // kalau request seperti store: tags berupa json string
             if (is_string($tags[0] ?? null)) {
                 $tags = array_map('intval', json_decode($tags[0]));
@@ -106,10 +113,9 @@ class ArticleController extends Controller
         return $this->success(new ArticleResource($res));
     }
 
-
     /**
      * Delete article
-     * 
+     *
      * Menghapus konten artikel di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
     #[Group('Article')]
@@ -117,12 +123,13 @@ class ArticleController extends Controller
     {
         Gate::authorize('delete', $article);
         $article->delete();
+
         return $this->delete();
     }
 
     /**
      * Get article detail
-     * 
+     *
      * Mendapatkan artikel detail berdasarkan slug
      */
     #[Group('Article')]
@@ -130,6 +137,7 @@ class ArticleController extends Controller
     {
         $res = Article::with('tags')->where('slug', $article)->first();
         Gate::authorize('view', $res);
+
         return $this->success(new ArticleResource($res));
     }
 }

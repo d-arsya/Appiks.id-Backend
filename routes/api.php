@@ -12,11 +12,10 @@ use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
-use App\Models\Article;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return response()->json("OK");
+    return response()->json('OK');
 });
 Route::get('user/bulk/template', [UserController::class, 'getTemplate']);
 Route::post('login', [AuthController::class, 'login']);

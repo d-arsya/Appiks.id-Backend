@@ -23,7 +23,7 @@ class CloseReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "result" => "required|string"
+            'result' => 'required|string',
         ];
     }
 }

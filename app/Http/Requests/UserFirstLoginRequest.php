@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Hash;
 class UserFirstLoginRequest extends FormRequest
 {
     use ApiResponder;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return !Auth::user()->verified;
+        return ! Auth::user()->verified;
     }
 
     protected function failedAuthorization()
@@ -25,6 +26,7 @@ class UserFirstLoginRequest extends FormRequest
             $this->error('Kamu sudah merubah profile', 403)
         );
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -39,15 +41,15 @@ class UserFirstLoginRequest extends FormRequest
                 'min:8',
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
-                'regex:/[0-9]/'
+                'regex:/[0-9]/',
             ],
-            "username" => "required|unique:users,username," . Auth::user()->id . "|string",
-            "phone" => "required|unique:users,phone," . Auth::user()->id . "|regex:/^[0-9]{10,15}$/",
+            'username' => 'required|unique:users,username,'.Auth::user()->id.'|string',
+            'phone' => 'required|unique:users,phone,'.Auth::user()->id.'|regex:/^[0-9]{10,15}$/',
         ];
     }
 
     protected function passedValidation()
     {
-        $this->merge(["verified" => true, "password" => Hash::make($this->password)]);
+        $this->merge(['verified' => true, 'password' => Hash::make($this->password)]);
     }
 }

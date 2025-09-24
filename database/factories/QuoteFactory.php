@@ -17,10 +17,10 @@ class QuoteFactory extends Factory
     public function definition(): array
     {
         return [
-            "school_id" => fake()->randomNumber(),
-            "text" => fake()->sentence(10),
-            "author" => fake()->name(),
-            "type" => fake()->randomElement(['secure', 'insecure', 'daily'])
+            'school_id' => fake()->randomNumber(),
+            'text' => fake()->sentence(10),
+            'author' => fake()->name(),
+            'type' => fake()->randomElement(['secure', 'insecure', 'daily']),
         ];
     }
 }

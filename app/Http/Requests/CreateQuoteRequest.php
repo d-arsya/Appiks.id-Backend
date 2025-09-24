@@ -23,14 +23,14 @@ class CreateQuoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "text" => "required|string",
-            "author" => "required|string",
-            "type" => "required|string|in:secure,insecure,daily",
+            'text' => 'required|string',
+            'author' => 'required|string',
+            'type' => 'required|string|in:secure,insecure,daily',
         ];
     }
 
     protected function passedValidation()
     {
-        return $this->merge(["school_id" => Auth::user()->school_id]);
+        return $this->merge(['school_id' => Auth::user()->school_id]);
     }
 }

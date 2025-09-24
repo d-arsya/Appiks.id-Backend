@@ -4,11 +4,9 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Video;
-use Illuminate\Auth\Access\Response;
 
 class VideoPolicy
 {
-
     /**
      * Determine whether the user can create models.
      */
@@ -22,14 +20,15 @@ class VideoPolicy
      */
     public function view(User $user, Video $video): bool
     {
-        return $user->school_id == $video->school_id;;
+        return $user->school_id == $video->school_id;
     }
+
     /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Video $video): bool
     {
-        return $user->role == 'admin' && $user->school_id == $video->school_id;;
+        return $user->role == 'admin' && $user->school_id == $video->school_id;
     }
 
     /**

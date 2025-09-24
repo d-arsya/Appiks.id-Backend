@@ -9,8 +9,10 @@ use League\CommonMark\Extension\SmartPunct\Quote;
 class School extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
-    protected $hidden = ["created_at", "updated_at"];
+
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function rooms()
     {
@@ -21,34 +23,42 @@ class School extends Model
     {
         return $this->hasMany(User::class);
     }
+
     public function admins()
     {
         return $this->hasMany(User::class)->where('role', 'admin');
     }
+
     public function headteacher()
     {
         return $this->hasOne(User::class)->where('role', 'headteacher');
     }
+
     public function conselors()
     {
         return $this->hasMany(User::class)->where('role', 'conselor');
     }
+
     public function teachers()
     {
         return $this->hasMany(User::class)->where('role', 'teacher');
     }
+
     public function students()
     {
         return $this->hasMany(User::class)->where('role', 'student');
     }
+
     public function videos()
     {
         return $this->hasMany(Video::class);
     }
+
     public function articles()
     {
         return $this->hasMany(Article::class);
     }
+
     public function quotes()
     {
         return $this->hasMany(Quote::class);

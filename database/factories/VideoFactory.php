@@ -14,7 +14,6 @@ class VideoFactory extends Factory
      *
      * @return array<string, mixed>
      */
-
     protected $youtubeIds = [
         'dQw4w9WgXcQ',
         '9bZkp7q19f0',
@@ -31,14 +30,14 @@ class VideoFactory extends Factory
     public function definition(): array
     {
         return [
-            "school_id" => fake()->randomNumber(),
-            "title" => fake()->sentence(4),
-            "description" => fake()->sentence(10),
-            "thumbnail" => fake()->imageUrl(),
-            "duration" => fake()->numberBetween(1, 59) . ":" . fake()->randomNumber(1, 59),
-            "channel" => fake()->name(),
-            "views" => fake()->numberBetween(100, 999),
-            "video_id" => $this->youtubeIds[array_rand($this->youtubeIds)]
+            'school_id' => fake()->randomNumber(),
+            'title' => fake()->sentence(4),
+            'description' => fake()->sentence(10),
+            'thumbnail' => fake()->imageUrl(),
+            'duration' => fake()->numberBetween(1, 59).':'.fake()->randomNumber(1, 59),
+            'channel' => fake()->name(),
+            'views' => fake()->numberBetween(100, 999),
+            'video_id' => $this->youtubeIds[array_rand($this->youtubeIds)],
         ];
     }
 }

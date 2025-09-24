@@ -2,12 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Article;
+use App\Models\User;
 
 class ArticlePolicy
 {
-
     /**
      * Determine whether the user can create models.
      */
@@ -23,12 +22,13 @@ class ArticlePolicy
     {
         return $user->school_id == $article->school_id;
     }
+
     /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Article $article): bool
     {
-        return $user->role == 'admin' && $user->school_id == $article->school_id;;
+        return $user->role == 'admin' && $user->school_id == $article->school_id;
     }
 
     /**

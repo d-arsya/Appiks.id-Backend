@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class MoodRecordSendRequest extends FormRequest
 {
     use ApiResponder;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -19,6 +20,7 @@ class MoodRecordSendRequest extends FormRequest
     {
         $user = Auth::user()->role == 'student';
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->get()->count() == 0;
+
         return $user && $mood;
     }
 
@@ -37,12 +39,12 @@ class MoodRecordSendRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "status" => "required|string|in:happy,sad,angry,neutral"
+            'status' => 'required|string|in:happy,sad,angry,neutral',
         ];
     }
 
     protected function passedValidation()
     {
-        $this->merge(["user_id" => Auth::id(), 'recorded' => Carbon::today()]);
+        $this->merge(['user_id' => Auth::id(), 'recorded' => Carbon::today()]);
     }
 }

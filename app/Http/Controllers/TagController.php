@@ -6,7 +6,6 @@ use App\Http\Resources\TagResource;
 use App\Models\Tag;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
@@ -19,6 +18,7 @@ class TagController extends Controller
     public function index()
     {
         $tags = Tag::all();
+
         return $this->success(TagResource::collection($tags));
     }
 }

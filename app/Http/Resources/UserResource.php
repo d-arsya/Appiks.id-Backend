@@ -19,6 +19,7 @@ class UserResource extends JsonResource
         unset($data['mentor_id']);
         unset($data['room_id']);
         unset($data['school_id']);
+
         return $data;
     }
 }

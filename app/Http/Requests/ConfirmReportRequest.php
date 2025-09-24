@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Report;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -25,19 +24,20 @@ class ConfirmReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "date" => "required|date_format:Y-m-d",
+            'date' => 'required|date_format:Y-m-d',
             /**
              * @var string
+             *
              * @example 10:10
              */
-            'time' => Rule::date()->format("H:i"),
-            "notes" => "required|string",
-            "room" => "required|string",
+            'time' => Rule::date()->format('H:i'),
+            'notes' => 'required|string',
+            'room' => 'required|string',
         ];
     }
 
     protected function passedValidation()
     {
-        $this->merge(["status" => "disetujui"]);
+        $this->merge(['status' => 'disetujui']);
     }
 }

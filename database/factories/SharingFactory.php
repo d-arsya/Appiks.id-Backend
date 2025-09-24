@@ -17,14 +17,14 @@ class SharingFactory extends Factory
     public function definition(): array
     {
         return [
-            "user_id" => fake()->randomNumber(),
-            "title" => fake()->sentence(),
-            "description" => fake()->text(),
-            "reply" => fake()->text(),
-            "replied_at" => fake()->date(),
-            "replied_by" => fake()->name(),
-            "priority" => fake()->randomElement(['tinggi', 'rendah']),
-            "created_at" => now(),
+            'user_id' => fake()->randomNumber(),
+            'title' => fake()->sentence(),
+            'description' => fake()->text(),
+            'reply' => fake()->text(),
+            'replied_at' => fake()->date(),
+            'replied_by' => fake()->name(),
+            'priority' => fake()->randomElement(['tinggi', 'rendah']),
+            'created_at' => now(),
         ];
     }
 }

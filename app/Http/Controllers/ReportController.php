@@ -12,7 +12,6 @@ use App\Models\Sharing;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -22,7 +21,7 @@ class ReportController extends Controller
 
     /**
      * Get all report data
-     * 
+     *
      * Get latest reports data belongs to student for student or belongs to all student of counselored for counselor
      */
     #[Group('Report')]
@@ -31,15 +30,16 @@ class ReportController extends Controller
         $user = Auth::user();
         if ($user->role == 'student') {
             $reports = $user->report()->with(['counselor', 'user'])->orderBy('date')->get();
-        } else if ($user->role == 'counselor') {
+        } elseif ($user->role == 'counselor') {
             $reports = Report::with(['counselor', 'user', 'user.room'])->whereIn('user_id', $user->counselored->pluck('id'))->get();
         }
+
         return $this->success(ReportResource::collection($reports));
     }
 
     /**
      * Get report today count
-     * 
+     *
      * Mendapatkan data jumlah konseling berdasarkan tipenya
      */
     #[Group('Report')]
@@ -51,12 +51,11 @@ class ReportController extends Controller
         $countsByStatus = $reports->countBy('status');
         $countsByStatusArray = $reports->countBy('status')->toArray();
 
-
         return $this->success([
-            "dijadwalkan" => (int) ($countsByStatusArray["dijadwalkan"] ?? 0),
-            "menunggu" => (int) ($countsByStatusArray["menunggu"] ?? 0),
-            "selesai" => (int) ($countsByStatusArray["selesai"] ?? 0),
-            "dibatalkan" => (int) ($countsByStatusArray["dibatalkan"] ?? 0),
+            'dijadwalkan' => (int) ($countsByStatusArray['dijadwalkan'] ?? 0),
+            'menunggu' => (int) ($countsByStatusArray['menunggu'] ?? 0),
+            'selesai' => (int) ($countsByStatusArray['selesai'] ?? 0),
+            'dibatalkan' => (int) ($countsByStatusArray['dibatalkan'] ?? 0),
         ]);
     }
 
@@ -67,7 +66,8 @@ class ReportController extends Controller
     public function store(CreateReportRequest $request)
     {
         $report = Report::create($request->all());
-        Sharing::where('user_id', Auth::id())->where('created_at', 'like', now()->toDateString() . '%')->update(["priority" => "tinggi"]);
+        Sharing::where('user_id', Auth::id())->where('created_at', 'like', now()->toDateString().'%')->update(['priority' => 'tinggi']);
+
         return $this->created(new ReportResource($report));
     }
 
@@ -78,17 +78,18 @@ class ReportController extends Controller
     public function view(Report $report)
     {
         Gate::authorize('view', $report);
+
         return $this->created(new ReportResource($report));
     }
 
     /**
      * Confirm report meeting
-     * 
      */
     #[Group('Report')]
     public function confirm(ConfirmReportRequest $request, Report $report)
     {
         $report->update($request->all());
+
         return $this->created(new ReportResource($report));
     }
 
@@ -99,6 +100,7 @@ class ReportController extends Controller
     public function reschedule(RescheduleReportRequest $request, Report $report)
     {
         $report->update($request->all());
+
         return $this->created(new ReportResource($report));
     }
 
@@ -108,7 +110,8 @@ class ReportController extends Controller
     #[Group('Report')]
     public function close(CloseReportRequest $request, Report $report)
     {
-        $report->update(["result" => $request->result, "status" => "selesai"]);
+        $report->update(['result' => $request->result, 'status' => 'selesai']);
+
         return $this->created(new ReportResource($report));
     }
 
@@ -118,11 +121,14 @@ class ReportController extends Controller
     #[Group('Report')]
     public function cancel(CloseReportRequest $request, Report $report)
     {
-        $report->update(["result" => $request->result, "status" => "dibatalkan"]);
+        $report->update(['result' => $request->result, 'status' => 'dibatalkan']);
+
         return $this->created(new ReportResource($report));
     }
+
     /**
      * Get report and sharing count graph
+     *
      * @response array{
      *   data: array{
      *     report: array<string, int>,
@@ -147,8 +153,8 @@ class ReportController extends Controller
             ->pluck('total', 'month');
 
         return $this->success([
-            "report"  => (object) $report,
-            "sharing" => (object) $sharing,
+            'report' => (object) $report,
+            'sharing' => (object) $sharing,
         ]);
     }
 }

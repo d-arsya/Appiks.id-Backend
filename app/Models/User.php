@@ -14,7 +14,6 @@ class User extends Authenticatable implements JWTSubject
 
     protected $guarded = [];
 
-
     protected $hidden = [
         'id',
         'password',
@@ -25,7 +24,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'password' => 'hashed',
-            'verified' => 'boolean'
+            'verified' => 'boolean',
         ];
     }
 
@@ -68,6 +67,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(User::class, 'counselor_id', 'id')->where('role', 'student');
     }
+
     public function mentored()
     {
         return $this->hasMany(User::class, 'mentor_id', 'id')->where('role', 'student');

@@ -16,12 +16,13 @@ class RoomFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->randomElement(["IPA", "IPS"]) . " " . fake()->numberBetween(1, 6);
+        $name = fake()->randomElement(['IPA', 'IPS']).' '.fake()->numberBetween(1, 6);
+
         return [
-            "name" => $name,
-            "school_id" => fake()->randomNumber(),
-            "level" => fake()->randomElement(['X', 'XI', 'XII']),
-            "code" => fake()->lexify("????????")
+            'name' => $name,
+            'school_id' => fake()->randomNumber(),
+            'level' => fake()->randomElement(['X', 'XI', 'XII']),
+            'code' => fake()->lexify('????????'),
         ];
     }
 }

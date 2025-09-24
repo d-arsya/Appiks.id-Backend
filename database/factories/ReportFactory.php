@@ -17,15 +17,15 @@ class ReportFactory extends Factory
     public function definition(): array
     {
         return [
-            "counselor_id" => fake()->randomNumber(),
-            "user_id" => fake()->randomNumber(),
-            "topic" => fake()->sentence(4),
-            "date" => fake()->date(),
-            "time" => fake()->time('H:i'),
-            "status" => fake()->randomElement(['menunggu', 'selesai', 'dibatalkan', 'disetujui', 'dijadwalkan']),
-            "priority" => fake()->randomElement(['tinggi', 'rendah']),
-            "notes" => fake()->sentence(10),
-            "result" => fake()->sentence(10),
+            'counselor_id' => fake()->randomNumber(),
+            'user_id' => fake()->randomNumber(),
+            'topic' => fake()->sentence(4),
+            'date' => fake()->date(),
+            'time' => fake()->time('H:i'),
+            'status' => fake()->randomElement(['menunggu', 'selesai', 'dibatalkan', 'disetujui', 'dijadwalkan']),
+            'priority' => fake()->randomElement(['tinggi', 'rendah']),
+            'notes' => fake()->sentence(10),
+            'result' => fake()->sentence(10),
         ];
     }
 }

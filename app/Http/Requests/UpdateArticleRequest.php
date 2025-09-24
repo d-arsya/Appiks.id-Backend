@@ -14,7 +14,7 @@ class UpdateArticleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return  Gate::allows('create', Article::class);
+        return Gate::allows('create', Article::class);
     }
 
     /**
@@ -25,11 +25,11 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "tags.*"      => "integer|exists:tags,id",
-            "title"       => "required|string|max:255",
-            "description" => "required|string",
-            "thumbnail"   => "nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5200",
-            "content"     => "required|json",
+            'tags.*' => 'integer|exists:tags,id',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5200',
+            'content' => 'required|json',
         ];
     }
 
@@ -41,8 +41,8 @@ class UpdateArticleRequest extends FormRequest
         $uniquePart = substr((string) Str::uuid(), 0, 4);
 
         $this->merge([
-            "slug"      => $baseSlug . '-' . $uniquePart,
-            "tags"      => (array) $this->input('tags', []),
+            'slug' => $baseSlug.'-'.$uniquePart,
+            'tags' => (array) $this->input('tags', []),
         ]);
     }
 }
