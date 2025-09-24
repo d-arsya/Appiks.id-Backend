@@ -152,8 +152,7 @@ class DashboardController extends Controller
 
         $contents = $videos
             ->union($articles)
-            ->union($quotes)
-            ->paginate(100);
+            ->union($quotes)->get();
         return $this->success($contents);
     }
 }

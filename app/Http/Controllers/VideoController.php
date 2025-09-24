@@ -10,6 +10,7 @@ use App\Models\Video;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -24,13 +25,45 @@ class VideoController extends Controller
      * Mendapatkan semua data video dan artikel di sekolah tersebut
      */
     #[Group('Content')]
-    public function allContents()
+    public function allContents(Request $request)
     {
-        $videos = Video::with('tags')->where('school_id', Auth::user()->school_id)->get()->toArray();
-        $articles = Article::with('tags')->where('school_id', Auth::user()->school_id)->get()->toArray();
-        $contents = array_merge($videos, $articles);
-        shuffle($contents);
-        return $this->success($contents);
+        $schoolId = Auth::user()->school_id;
+
+        $videos = Video::with('tags')
+            ->where('school_id', $schoolId)
+            ->get()
+            ->map(function ($v) {
+                $v->content_type = 'video';
+                return $v;
+            });
+
+        $articles = Article::with('tags')
+            ->where('school_id', $schoolId)
+            ->get()
+            ->map(function ($a) {
+                $a->content_type = 'article';
+                return $a;
+            });
+
+        // merge videos + articles
+        $contents = $videos->concat($articles);
+
+        // sort by created_at (latest first)
+        $contents = $contents->sortByDesc('created_at')->values();
+
+        // pagination params
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 10);
+
+        $paginated = new LengthAwarePaginator(
+            $contents->forPage($page, $perPage),
+            $contents->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return $this->success($paginated);
     }
     /**
      * Get latest 3 contents
