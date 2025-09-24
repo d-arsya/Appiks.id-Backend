@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Models\Tag;
@@ -67,17 +68,42 @@ class ArticleController extends Controller
      * Mengupdate tag yang dimiliki oleh artikel tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
     #[Group('Article')]
-    public function update(Request $request, Article $article)
+    public function update(UpdateArticleRequest $request, Article $article)
     {
-        Gate::authorize('update', $article);
-        $request->validate([
-            "tags" => "array",
-            "tags.*" => "integer|exists:tags,id"
-        ]);
-        $article->tags()->sync($request->tags);
+        $data = $request->all();
+        unset($data['tags']);
+
+        // handle thumbnail jika ada file baru
+        if ($request->hasFile('thumbnail')) {
+            // opsional: hapus file lama
+            if ($article->thumbnail && str_contains($article->thumbnail, '/storage/')) {
+                $oldPath = str_replace(env('APP_URL') . '/storage/', '', $article->thumbnail);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            $path = $request->file('thumbnail')->store('thumbnails', 'public');
+            $data['thumbnail'] = env('APP_URL') . Storage::url($path);
+        }
+
+        // update article
+        $article->update($data);
+
+        // update tags
+        $tags = $request->tags;
+        if (!empty($tags)) {
+            // kalau request seperti store: tags berupa json string
+            if (is_string($tags[0] ?? null)) {
+                $tags = array_map('intval', json_decode($tags[0]));
+            }
+            $tags = Tag::whereIn('id', $tags)->pluck('id')->toArray();
+            $article->tags()->sync($tags);
+        }
+
         $res = Article::with(['school', 'tags'])->where('id', $article->id)->first();
+
         return $this->success(new ArticleResource($res));
     }
+
 
     /**
      * Delete article

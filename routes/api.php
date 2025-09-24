@@ -39,13 +39,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('user/bulk', [UserController::class, 'bulkCreate']);
+    Route::post('article-update/{article}', [ArticleController::class, 'update']);
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::delete('user/{user:username}', [UserController::class, 'destroy']);
     Route::apiResource('room', RoomController::class)->only(['index']);
     Route::apiResource('video', VideoController::class)->except(['show']);
-    Route::apiResource('article', ArticleController::class)->except(['show']);
+    Route::apiResource('articles', ArticleController::class)->except(['show', 'update']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {

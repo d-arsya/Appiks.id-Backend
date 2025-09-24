@@ -4,11 +4,10 @@ namespace App\Http\Requests;
 
 use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
-class CreateArticleRequest extends FormRequest
+class UpdateArticleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +25,11 @@ class CreateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // "tags" => "array",
-            "tags.*" => "integer|exists:tags,id",
-            "title"       => ["required", "string", "max:255"],
-            "description" => ["string"],
-            "thumbnail"   => ["image", "mimes:jpeg,png,jpg,gif,webp", "max:5200"],
-            "content"     => ["required", "json"],
+            "tags.*"      => "integer|exists:tags,id",
+            "title"       => "required|string|max:255",
+            "description" => "required|string",
+            "thumbnail"   => "sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:5200",
+            "content"     => "required|json",
         ];
     }
 
@@ -43,7 +41,6 @@ class CreateArticleRequest extends FormRequest
         $uniquePart = substr((string) Str::uuid(), 0, 4);
 
         $this->merge([
-            "school_id" => Auth::user()->school_id,
             "slug"      => $baseSlug . '-' . $uniquePart,
             "tags"      => (array) $this->input('tags', []),
         ]);
