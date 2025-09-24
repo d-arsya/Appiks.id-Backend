@@ -54,7 +54,7 @@ class VideoController extends Controller
      * 
      * Mendapatkan 3 data video dan artikel terbaru di sekolah tersebut
      */
-    #[Group('Dashboard')]
+    #[Group('Content')]
     public function getLatestContent()
     {
         $schoolId = Auth::user()->school_id;
@@ -82,7 +82,7 @@ class VideoController extends Controller
      * 
      * Mendapatkan jumlah konten yang dibuat hari ini
      */
-    #[Group('Dashboard')]
+    #[Group('Content')]
     public function getTodayContent()
     {
         $school = Auth::user()->school;
@@ -101,7 +101,7 @@ class VideoController extends Controller
      * 
      * Mendapatkan semua data video di sekolah tersebut
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function index()
     {
         $videos = Video::with('tags')->where('school_id', Auth::user()->school_id)->get();
@@ -112,7 +112,7 @@ class VideoController extends Controller
      * 
      * Mendapatkan semua video dengan tag tertentu di sekolah tersebut. Menggunakan id dari Tag
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function getByTag(Tag $tag)
     {
         $videos = $tag->videos()->with('tags')->where('school_id', Auth::user()->school_id)->get();
@@ -124,7 +124,7 @@ class VideoController extends Controller
      * 
      * Membuat sebuah video baru. Cukup mengirimkan ID youtube video dan sistem akan mengambil meta data yang dibutuhkan
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function store(CreateVideoRequest $request)
     {
         $meta = $this->getVideoDetail($request->video_id);
@@ -141,7 +141,7 @@ class VideoController extends Controller
      * 
      * Mengupdate tag yang dimiliki oleh video tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function update(Request $request, Video $video)
     {
         Gate::authorize('update', $video);
@@ -159,7 +159,7 @@ class VideoController extends Controller
      * 
      * Menghapus konten video di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function destroy(Video $video)
     {
         Gate::authorize('delete', $video);
@@ -172,7 +172,7 @@ class VideoController extends Controller
      * 
      * Mendapatkan video detail berdasarkan ID Youtube
      */
-    #[Group('Content')]
+    #[Group('Video')]
     public function getVideoDetailId(Video $video)
     {
         Gate::authorize('view', $video);

@@ -130,7 +130,7 @@ class MoodRecordController extends Controller
     /**
      * Get mood trends a year
      */
-    #[Group('Dashboard')]
+    #[Group('Mood Record')]
     public function getMoodTrend()
     {
         Gate::authorize('dashboard-data');
@@ -168,7 +168,7 @@ class MoodRecordController extends Controller
     /**
      * Get mood count graph
      */
-    #[Group('Dashboard')]
+    #[Group('Mood Record')]
     public function getMoodGraph()
     {
         Gate::authorize('dashboard-data');

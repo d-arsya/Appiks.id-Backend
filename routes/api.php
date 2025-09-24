@@ -29,7 +29,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('mood_record/streaks', [MoodRecordController::class, 'streaks']);
     Route::get('questionnaire', [QuestionnaireController::class, 'getAllQuestionnaires']);
     Route::get('content', [VideoController::class, 'allContents']);
-    Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
+    Route::get('video/tag/{tag}', [VideoController::class, 'getByaTag']);
     Route::get('article/tag/{tag}', [ArticleController::class, 'getByTag']);
     Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
     Route::get('article/{article:slug}', [ArticleController::class, 'getArticle']);
@@ -43,6 +43,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::delete('user/{user:username}', [UserController::class, 'destroy']);
+    Route::apiResource('room', RoomController::class)->only(['index']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('article', ArticleController::class)->except(['show']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
@@ -81,7 +82,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('latest-content', [VideoController::class, 'getLatestContent']);
         Route::get('latest-user', [UserController::class, 'getLatestUser']);
         Route::get('today-user', [UserController::class, 'getTodayUser']);
-        Route::get('today-countent', [VideoController::class, 'getTodayContent']);
+        Route::get('today-content', [VideoController::class, 'getTodayContent']);
         Route::get('content', [DashboardController::class, 'content']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);

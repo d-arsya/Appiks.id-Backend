@@ -21,7 +21,7 @@ class ArticleController extends Controller
      * 
      * Mendapatkan semua data artikel di sekolah tersebut
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function index()
     {
         $articles = Article::with('tags')->where('school_id', Auth::user()->school_id)->get();
@@ -32,7 +32,7 @@ class ArticleController extends Controller
      * 
      * Mendapatkan semua artikel dengan tag tertentu di sekolah tersebut. Menggunakan id dari Tag
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function getByTag(Tag $tag)
     {
         $articles = $tag->articles()->with('tags')->where('school_id', Auth::user()->school_id)->get();
@@ -45,7 +45,7 @@ class ArticleController extends Controller
      * Membuat sebuah artikel baru
      * @bodyParam tags array<int> optional Daftar ID tag. Contoh: [1, 2, 3]
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function store(CreateArticleRequest $request)
     {
         $tags = $request->tags[0];
@@ -66,7 +66,7 @@ class ArticleController extends Controller
      * 
      * Mengupdate tag yang dimiliki oleh artikel tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function update(Request $request, Article $article)
     {
         Gate::authorize('update', $article);
@@ -84,7 +84,7 @@ class ArticleController extends Controller
      * 
      * Menghapus konten artikel di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function destroy(Article $article)
     {
         Gate::authorize('delete', $article);
@@ -97,7 +97,7 @@ class ArticleController extends Controller
      * 
      * Mendapatkan artikel detail berdasarkan slug
      */
-    #[Group('Content')]
+    #[Group('Article')]
     public function getArticle(Article $article)
     {
         Gate::authorize('view', $article);

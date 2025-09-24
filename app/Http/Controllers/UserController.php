@@ -25,7 +25,7 @@ class UserController extends Controller
     /**
      * Get all students data
      */
-    #[Group('Dashboard')]
+    #[Group('User')]
     public function getStudents()
     {
         $role = Auth::user()->role;
@@ -36,7 +36,7 @@ class UserController extends Controller
     /**
      * Get latest 3 user
      */
-    #[Group('Dashboard')]
+    #[Group('User')]
     public function getLatestUser()
     {
         $users = Auth::user()->school->users()
@@ -48,7 +48,7 @@ class UserController extends Controller
     /**
      * Get user count created today
      */
-    #[Group('Dashboard')]
+    #[Group('User')]
     public function getTodayUser()
     {
         $users = Auth::user()->school->users()->whereDate('created_at', now())->count();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RoomResource;
 use App\Models\Room;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
@@ -18,7 +19,7 @@ class RoomController extends Controller
      * 
      * Digunakan untuk mendapatkan jumlah kelas didalam sekolah user tersebut. Bisa diakses oleh selain murid
      */
-    #[Group('Dashboard')]
+    #[Group('Room')]
     public function getRoomCount()
     {
         Gate::authorize('dashboard-data');
@@ -31,11 +32,11 @@ class RoomController extends Controller
      * 
      * Digunakan untuk mendapatkan jumlah kelas didalam sekolah user tersebut. Bisa diakses oleh selain murid
      */
-    #[Group('Dashboard')]
+    #[Group('Room')]
     public function index()
     {
         Gate::authorize('dashboard-data');
-        $count = Room::where('school_id', Auth::user()->school_id)->count();
-        return $this->success(["count" => (int) $count]);
+        $rooms = Room::where('school_id', Auth::user()->school_id)->get();
+        return $this->success(RoomResource::collection($rooms));
     }
 }
