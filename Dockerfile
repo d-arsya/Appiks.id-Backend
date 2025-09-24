@@ -1,8 +1,6 @@
 FROM dunglas/frankenphp:php8.3
 
-ENV SERVER_NAME=":80" \
-    PHP_UPLOAD_MAX_FILESIZE=15M \
-    PHP_POST_MAX_SIZE=15M
+ENV SERVER_NAME=":80"
 
 WORKDIR /app
 
@@ -18,6 +16,10 @@ RUN install-php-extensions \
     exif \
     gd \
     zip
+
+RUN echo "upload_max_filesize = 20M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 20M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 128M" >> /usr/local/etc/php/conf.d/uploads.ini
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 
