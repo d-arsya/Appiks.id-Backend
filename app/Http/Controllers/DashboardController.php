@@ -147,7 +147,7 @@ class DashboardController extends Controller
         $articles = Article::select('slug as ids', 'title', DB::raw("'article' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
-        $quotes = Quote::select('id as ids', 'author as title', DB::raw("'quote' as type"), 'created_at')
+        $quotes = Quote::select('id as ids', 'text as title', DB::raw("'quote' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
         $contents = $videos
