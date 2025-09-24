@@ -32,7 +32,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('video/tag/{tag}', [VideoController::class, 'getByaTag']);
     Route::get('article/tag/{tag}', [ArticleController::class, 'getByTag']);
     Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
-    Route::get('article/{article:slug}', [ArticleController::class, 'getArticle']);
+    Route::get('article/{article}', [ArticleController::class, 'getArticle']);
     Route::get('quote/mood', [QuoteController::class, 'getByType']);
     Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);

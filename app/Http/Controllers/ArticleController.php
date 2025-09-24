@@ -124,9 +124,10 @@ class ArticleController extends Controller
      * Mendapatkan artikel detail berdasarkan slug
      */
     #[Group('Article')]
-    public function getArticle(Article $article)
+    public function getArticle(string $article)
     {
-        Gate::authorize('view', $article);
-        return $this->success(new ArticleResource($article));
+        $res = Article::with('tags')->where('slug', $article)->first();
+        Gate::authorize('view', $res);
+        return $this->success(new ArticleResource($res));
     }
 }
