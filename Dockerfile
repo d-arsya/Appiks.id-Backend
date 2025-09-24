@@ -1,6 +1,8 @@
 FROM dunglas/frankenphp:php8.3
 
-ENV SERVER_NAME=":80"
+ENV SERVER_NAME=":80" \
+    PHP_UPLOAD_MAX_FILESIZE=15M \
+    PHP_POST_MAX_SIZE=15M
 
 WORKDIR /app
 
