@@ -7,6 +7,7 @@ use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
 use App\Imports\UsersImport;
 use App\Imports\UsersImportSync;
+use App\Models\Room;
 use App\Models\User;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -127,7 +129,7 @@ class UserController extends Controller
     /**
      * Edit user data (by admin)
      * 
-     * Kalau yang diedit adalah siswa maka butuh room_id. Selebihnya tidak
+     * Kalau yang diedit adalah siswa maka butuh room_id (berupa 8 karakter kode kelas) dan mentor_id (berupa NIP Guru Wali). Selebihnya tidak
      */
     #[Group('User')]
     public function edit(Request $request, User $user)
@@ -141,9 +143,17 @@ class UserController extends Controller
                 "phone"    => "string|unique:users,phone,{$user->id}",
                 "identifier"    => "string|unique:users,identifier,{$user->id}",
                 "room_id"    => "string|exists:rooms,code",
+                'mentor_id' => [
+                    'string',
+                    Rule::exists('users', 'identifier')->where(function ($query) {
+                        $query->where('role', 'teacher');
+                    }),
+                ],
                 "name"    => "string",
                 "password" => "nullable|string|min:8", // optional password
             ]);
+            $data["room_id"] = Room::whereCode($data["room_id"])->pluck('id')[0];
+            $data["mentor_id"] = User::whereIdentifier($data["mentor_id"])->pluck('id')[0];
         } else if (in_array($user->role, ['teacher', 'headteacher', 'counselor'])) {
             $data = $request->validate([
                 "username" => "string|unique:users,username,{$user->id}",
