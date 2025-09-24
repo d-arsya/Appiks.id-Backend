@@ -25,7 +25,7 @@ class VideoController extends Controller
      * Mendapatkan semua data video dan artikel di sekolah tersebut
      */
     #[Group('Content')]
-    public function allContents(Request $request)
+    public function allContents()
     {
         $schoolId = Auth::user()->school_id;
 
@@ -45,25 +45,9 @@ class VideoController extends Controller
                 return $a;
             });
 
-        // merge videos + articles
         $contents = $videos->concat($articles);
-
-        // sort by created_at (latest first)
         $contents = $contents->sortByDesc('created_at')->values();
-
-        // pagination params
-        $page = $request->input('page', 1);
-        $perPage = $request->input('per_page', 10);
-
-        $paginated = new LengthAwarePaginator(
-            $contents->forPage($page, $perPage),
-            $contents->count(),
-            $perPage,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        return $this->success($paginated);
+        return $this->success($contents);
     }
     /**
      * Get latest 3 contents
