@@ -81,6 +81,9 @@ Route::middleware('auth:api')->group(function () {
         Route::get('today-user', [UserController::class, 'getTodayUser']);
         Route::get('today-countent', [VideoController::class, 'getTodayContent']);
     });
+    Route::prefix('dashboard')->group(function () {
+        Route::get('content', [DashboardController::class, 'content']);
+    });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });
 Route::get('tag', [TagController::class, 'index']);

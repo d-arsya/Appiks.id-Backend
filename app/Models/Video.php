@@ -10,7 +10,7 @@ class Video extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $hidden = ["created_at", "updated_at", "school_id"];
+    protected $hidden = ["updated_at", "school_id"];
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'video_tag');

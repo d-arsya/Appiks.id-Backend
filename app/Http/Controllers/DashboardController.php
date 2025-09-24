@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\MoodRecord;
+use App\Models\Quote;
 use App\Models\Report;
 use App\Models\Sharing;
 use App\Models\User;
+use App\Models\Video;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
@@ -126,5 +130,30 @@ class DashboardController extends Controller
             'content_count'      => $videos_count + $articles_count,
             'content_today_count' => $content_today_count,
         ]);
+    }
+
+    /**
+     * Get all content with quotes
+     * 
+     * Mendapatkan semua data videe, artikel, dan quotes di sekolah tersebut
+     */
+    #[Group('Content')]
+    public function content()
+    {
+        $schoolId = Auth::user()->school_id;
+        $videos = Video::select('id', 'title', DB::raw("'video' as type"), 'created_at')
+            ->where('school_id', $schoolId);
+
+        $articles = Article::select('id', 'title', DB::raw("'article' as type"), 'created_at')
+            ->where('school_id', $schoolId);
+
+        $quotes = Quote::select('id', 'author as title', DB::raw("'quote' as type"), 'created_at')
+            ->where('school_id', $schoolId);
+
+        $contents = $videos
+            ->union($articles)
+            ->union($quotes)
+            ->paginate(100);
+        return $this->success($contents);
     }
 }
