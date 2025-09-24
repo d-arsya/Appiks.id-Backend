@@ -20,7 +20,7 @@ class RoomFactory extends Factory
         return [
             "name" => $name,
             "school_id" => fake()->randomNumber(),
-            "code" => fake()->lexify("??????????")
+            "code" => fake()->lexify("????????")
         ];
     }
 }

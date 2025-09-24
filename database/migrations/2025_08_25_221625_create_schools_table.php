@@ -20,7 +20,8 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code');
+            $table->string('level');
+            $table->char('code', 8)->unique();
             $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });

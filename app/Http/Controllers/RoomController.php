@@ -25,4 +25,17 @@ class RoomController extends Controller
         $count = Room::where('school_id', Auth::user()->school_id)->count();
         return $this->success(["count" => (int) $count]);
     }
+
+    /**
+     * Get all rooms data
+     * 
+     * Digunakan untuk mendapatkan jumlah kelas didalam sekolah user tersebut. Bisa diakses oleh selain murid
+     */
+    #[Group('Dashboard')]
+    public function index()
+    {
+        Gate::authorize('dashboard-data');
+        $count = Room::where('school_id', Auth::user()->school_id)->count();
+        return $this->success(["count" => (int) $count]);
+    }
 }

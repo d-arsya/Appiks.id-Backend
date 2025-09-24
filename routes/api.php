@@ -21,7 +21,6 @@ Route::get('/', function () {
 Route::get('user/bulk/template', [UserController::class, 'getTemplate']);
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
-    Route::post('user/bulk', [UserController::class, 'bulkCreate']);
     Route::get('me', [AuthController::class, 'me']);
     Route::get('check-username', [AuthController::class, 'checkUsername']);
     Route::get('mood_record/recap/{month}', [MoodRecordController::class, 'recapPerMonth']);
@@ -32,17 +31,19 @@ Route::middleware('auth:api')->group(function () {
     Route::get('content', [VideoController::class, 'allContents']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByTag']);
     Route::get('article/tag/{tag}', [ArticleController::class, 'getByTag']);
+    Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
+    Route::get('article/{article:slug}', [ArticleController::class, 'getArticle']);
+    Route::get('quote/mood', [QuoteController::class, 'getByType']);
+    Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::post('questionnaire/{type}', [QuestionnaireController::class, 'analyzeQuestionnaire'])->whereIn('type', ['secure', 'insecure']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('user/bulk', [UserController::class, 'bulkCreate']);
     Route::patch('profile', [UserController::class, 'profile']);
+    Route::patch('edit-user/{role}/{user:username}', [UserController::class, 'edit'])->whereIn('role', ['student', 'teacher', 'headteacher', 'counselor']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
-    Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
-    Route::get('article/{article:slug}', [ArticleController::class, 'getArticle']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('article', ArticleController::class)->except(['show']);
-    Route::get('quote/mood', [QuoteController::class, 'getByType']);
-    Route::get('quote/daily', [QuoteController::class, 'getDaily']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
@@ -80,8 +81,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('latest-user', [UserController::class, 'getLatestUser']);
         Route::get('today-user', [UserController::class, 'getTodayUser']);
         Route::get('today-countent', [VideoController::class, 'getTodayContent']);
-    });
-    Route::prefix('dashboard')->group(function () {
         Route::get('content', [DashboardController::class, 'content']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);

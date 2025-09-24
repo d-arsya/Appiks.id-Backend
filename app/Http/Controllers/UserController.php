@@ -14,6 +14,7 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -106,6 +107,46 @@ class UserController extends Controller
         return $this->success(new UserResource(Auth::user()), 'Success update user profile');
     }
 
+    /**
+     * Edit user data (by admin)
+     * 
+     * @param string $role student | teacher | headteacher | counselor.
+     */
+    #[Group('User')]
+    public function edit(Request $request, string $role, User $user)
+    {
+        Gate::allowIf(function (User $auth) use ($user) {
+            return $auth->role == 'admin' && $auth->school_id == $user->school_id;
+        });
+        if ($user->role == 'student') {
+            $data = $request->validate([
+                "username" => "string|unique:users,username,{$user->id}",
+                "phone"    => "string|unique:users,phone,{$user->id}",
+                "identifier"    => "string|unique:users,identifier,{$user->id}",
+                "name"    => "string",
+                "password" => "nullable|string|min:8", // optional password
+            ]);
+        } else if (in_array($user->role, ['teacher', 'headteacher', 'counselor'])) {
+            $data = $request->validate([
+                "username" => "string|unique:users,username,{$user->id}",
+                "phone"    => "string|unique:users,phone,{$user->id}",
+                "identifier"    => "string|unique:users,identifier,{$user->id}",
+                "name"    => "string",
+                "password" => "nullable|string|min:8", // optional password
+            ]);
+        }
+
+        // If password provided, hash it. Otherwise remove it from $data.
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return $this->success(new UserResource($user), 'Success update user profile');
+    }
     /**
      * Update user profile
      */

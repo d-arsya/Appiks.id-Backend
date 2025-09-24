@@ -141,13 +141,13 @@ class DashboardController extends Controller
     public function content()
     {
         $schoolId = Auth::user()->school_id;
-        $videos = Video::select('id', 'title', DB::raw("'video' as type"), 'created_at')
+        $videos = Video::select('video_id as ids', 'title', DB::raw("'video' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
-        $articles = Article::select('id', 'title', DB::raw("'article' as type"), 'created_at')
+        $articles = Article::select('slug as ids', 'title', DB::raw("'article' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
-        $quotes = Quote::select('id', 'author as title', DB::raw("'quote' as type"), 'created_at')
+        $quotes = Quote::select('id as ids', 'author as title', DB::raw("'quote' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
         $contents = $videos
