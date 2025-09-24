@@ -28,7 +28,7 @@ class UpdateArticleRequest extends FormRequest
             "tags.*"      => "integer|exists:tags,id",
             "title"       => "required|string|max:255",
             "description" => "required|string",
-            "thumbnail"   => "sometimes|image|mimes:jpeg,png,jpg,gif,webp|max:5200",
+            "thumbnail"   => "nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5200",
             "content"     => "required|json",
         ];
     }
