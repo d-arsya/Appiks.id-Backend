@@ -42,6 +42,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-user/{role}/{user:username}', [UserController::class, 'edit'])->whereIn('role', ['student', 'teacher', 'headteacher', 'counselor']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
+    Route::delete('user/{user:username}', [UserController::class, 'destroy']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('article', ArticleController::class)->except(['show']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);

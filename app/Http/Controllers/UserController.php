@@ -61,6 +61,23 @@ class UserController extends Controller
         $user = User::create($request->all());
         return $this->success(new UserResource($user));
     }
+    /**
+     * Delete user
+     */
+    #[Group('User')]
+    public function destroy(User $user)
+    {
+        Gate::allowIf(function (User $auth) use ($user) {
+            if ($auth->role == 'admin' && !in_array($user->role, ['super', 'admin'])) {
+                return $auth->school_id == $user->school_id;
+            } else if ($auth->role == 'super') {
+                return $user->role == 'admin';
+            }
+            return false;
+        });
+        $user->delete();
+        return $this->delete();
+    }
 
     /**
      * Get all users data at one school

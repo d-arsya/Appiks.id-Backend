@@ -12,6 +12,15 @@ trait ApiResponder
             'data'    => $data
         ], $status);
     }
+
+    protected function delete($message = 'Success', $status = 204)
+    {
+        return response()->json([
+            'success'  => true,
+            'message' => $message,
+        ], $status);
+    }
+
     protected function created($data, $message = 'Success')
     {
         return response()->json([

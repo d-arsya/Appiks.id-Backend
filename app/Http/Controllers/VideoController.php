@@ -164,7 +164,7 @@ class VideoController extends Controller
     {
         Gate::authorize('delete', $video);
         $video->delete();
-        return $this->success(null);
+        return $this->delete();
     }
 
     /**

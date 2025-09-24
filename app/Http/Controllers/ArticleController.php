@@ -89,7 +89,7 @@ class ArticleController extends Controller
     {
         Gate::authorize('delete', $article);
         $article->delete();
-        return $this->success(null);
+        return $this->delete();
     }
 
     /**

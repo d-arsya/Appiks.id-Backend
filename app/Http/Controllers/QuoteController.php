@@ -91,6 +91,6 @@ class QuoteController extends Controller
     {
         Gate::allowIf(fn(User $user) => $user->role == 'admin' && $user->school_id == $quote->school_id);
         $quote->delete();
-        return $this->success(null);
+        return $this->delete();
     }
 }
