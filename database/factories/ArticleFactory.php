@@ -65,7 +65,7 @@ class ArticleFactory extends Factory
             "slug" => fake()->slug(),
             "description" => fake()->paragraph(),
             "thumbnail" => fake()->imageUrl(),
-            "content" => $content,
+            "content" => json_encode($content),
         ];
     }
 }
