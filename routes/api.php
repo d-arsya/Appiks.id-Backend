@@ -46,7 +46,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('room', RoomController::class)->only(['index']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('article', ArticleController::class)->except(['show']);
-    Route::apiResource('quote', QuoteController::class);
+    Route::apiResource('quote', QuoteController::class)->except(['update']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');

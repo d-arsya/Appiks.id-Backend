@@ -68,19 +68,6 @@ class QuoteController extends Controller
     }
 
     /**
-     * Update quote
-     * 
-     * Mengedit quotes. Hanya bisa dilakukan oleh admin TU
-     */
-    #[Group('Quote')]
-    public function update(CreateQuoteRequest $request, Quote $quote)
-    {
-        $quote->update($request->all());
-        return $this->created(new QuoteResource($quote));
-    }
-
-
-    /**
      * Show quote detail
      * 
      * Mendapatkan detail quotes berdasarkan ID dan hanya bisa dilakukan oleh Admin TU di sekolah tersebut
