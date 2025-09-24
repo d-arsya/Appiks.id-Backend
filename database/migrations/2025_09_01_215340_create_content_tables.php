@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->string('thumbnail');
-            $table->longText('content');
+            $table->json('content');
             $table->timestamps();
         });
         Schema::create('tags', function (Blueprint $table) {

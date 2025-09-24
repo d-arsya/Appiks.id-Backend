@@ -11,6 +11,10 @@ class Article extends Model
 
     protected $guarded = [];
     protected $hidden = ["updated_at", "school_id"];
+    protected $casts = [
+        'content' => 'array',
+    ];
+
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'article_tag');
