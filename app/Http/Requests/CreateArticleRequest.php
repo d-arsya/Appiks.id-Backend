@@ -30,7 +30,7 @@ class CreateArticleRequest extends FormRequest
             "tags.*" => "integer|exists:tags,id",
             "title"       => ["required", "string", "max:255"],
             "description" => ["string"],
-            "thumbnail"   => ["image", "mimes:jpeg,png,jpg,gif,webp", "max:5200"],
+            "thumbnail"   => ["image", "mimes:jpeg,png,jpg,gif,webp", "max:10000"],
             "content"     => ["required", "json"],
         ];
     }

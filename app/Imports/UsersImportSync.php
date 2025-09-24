@@ -29,7 +29,7 @@ class UsersImportSync implements ToCollection, WithHeadingRow
         $this->counselors = User::where('role', 'counselor')->pluck('id', 'identifier')->toArray();
         $this->rooms   = Room::pluck('id', 'code')->toArray();
         $this->schoolId = $schoolId;
-        $this->defaultPassword = Hash::make('password');
+        $this->defaultPassword = Hash::make(config('app.default_password'));
         $this->insertedUsers = collect();
     }
 

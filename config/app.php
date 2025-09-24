@@ -123,6 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'default_password' => env('DEFAULT_PASSWORD', 'password')
+    'default_password' => env('DEFAULT_PASSWORD', 'password'),
+    'image_compress_key' => env('IMAGE_COMPRESSOR_API_KEY', 'apikey'),
+    'image_compress_url' => env('IMAGE_COMPRESSOR_URL', 'url'),
 
 ];

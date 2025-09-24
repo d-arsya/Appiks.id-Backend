@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('username')->unique();
             $table->string('identifier')->unique();
-            $table->string('password')->default(Hash::make('password'));
+            $table->string('password')->default(Hash::make(config('app.default_password')));
             $table->boolean('verified')->default(false);
             $table->enum('role', ['super', 'admin', 'teacher', 'student', 'counselor', 'headteacher'])->default('student');
             $table->foreignIdFor(User::class, 'mentor_id')->nullable()->constrained()->onDelete('restrict');
