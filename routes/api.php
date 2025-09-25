@@ -47,7 +47,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::delete('user/{user:username}', [UserController::class, 'destroy']);
-    Route::apiResource('room', RoomController::class)->only(['index', 'store']);
+    Route::apiResource('room', RoomController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('articles', ArticleController::class)->except(['show', 'update']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);

@@ -8,6 +8,7 @@ use App\Models\Room;
 use App\Models\User;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -53,7 +54,7 @@ class RoomController extends Controller
     public function index()
     {
         Gate::authorize('dashboard-data');
-        $rooms = Room::where('school_id', Auth::user()->school_id)->get();
+        $rooms = Room::with('school')->where('school_id', Auth::user()->school_id)->get();
 
         return $this->success(RoomResource::collection($rooms));
     }
@@ -67,6 +68,42 @@ class RoomController extends Controller
     public function store(CreateRoomRequest $request)
     {
         $room = Room::create($request->all());
+
+        return $this->success(new RoomResource($room));
+    }
+
+    /**
+     * Delete room
+     *
+     * Digunakan menghapus kelas. Hanya bisa dilakukan oleh Admin TU
+     */
+    #[Group('Room')]
+    public function destroy(Request $request, Room $room)
+    {
+        Gate::allowIf(function (User $user) use ($room) {
+            return $user->role == 'admin' && $user->school_id == $room->school_id;
+        });
+        $data = $room->toArray();
+
+        return $this->success($data);
+    }
+
+    /**
+     * Update room
+     *
+     * Digunakan mengubah data kelas. Hanya bisa dilakukan oleh Admin TU
+     */
+    #[Group('Room')]
+    public function update(Request $request, Room $room)
+    {
+        Gate::allowIf(function (User $user) use ($room) {
+            return $user->role == 'admin' && $user->school_id == $room->school_id;
+        });
+        $request->validate([
+            'name' => 'required|string',
+            'level' => 'required|string|in:X,XI,XII',
+        ]);
+        $room->update($request->all());
 
         return $this->success(new RoomResource($room));
     }
