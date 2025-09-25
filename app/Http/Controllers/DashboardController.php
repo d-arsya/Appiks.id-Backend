@@ -50,6 +50,33 @@ class DashboardController extends Controller
     }
 
     /**
+     * Dashboard admin for contents
+     *
+     * Mendapatkan data statistik hitungan jumlah konten
+     */
+    #[Group('Content')]
+    public function contentStatistics()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'admin';
+        });
+        $school = Auth::user()
+            ->school()
+            ->withCount(['videos', 'articles', 'quotes'])
+            ->first();
+
+        $video_count = $school->videos_count;
+        $article_count = $school->articles_count;
+        $quote_count = $school->quotes_count;
+
+        return $this->success([
+            'quote_count' => $quote_count,
+            'article_count' => $article_count,
+            'video_count' => $video_count,
+        ]);
+    }
+
+    /**
      * Dashboard teacher datas
      *
      * Mendapatkan data hitungan yang diperlukan di dashboard guru wali
@@ -146,6 +173,7 @@ class DashboardController extends Controller
     public function content()
     {
         $schoolId = Auth::user()->school_id;
+
         $videos = Video::select('video_id as ids', 'title', DB::raw("'video' as type"), 'created_at')
             ->where('school_id', $schoolId);
 
@@ -163,6 +191,24 @@ class DashboardController extends Controller
             ->fromSub($union, 'contents')
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // inject tags untuk video
+        $videoIds = $contents->where('type', 'video')->pluck('ids');
+
+        $videoTags = Video::with('tags')
+            ->whereIn('video_id', $videoIds)
+            ->get()
+            ->keyBy('video_id');
+
+        $contents->transform(function ($item) use ($videoTags) {
+            if ($item->type === 'video' && isset($videoTags[$item->ids])) {
+                $item->tags = $videoTags[$item->ids]->tags;
+            } else {
+                $item->tags = collect(); // biar konsisten tetap ada field tags
+            }
+
+            return $item;
+        });
 
         return $this->success($contents);
     }

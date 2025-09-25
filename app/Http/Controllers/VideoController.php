@@ -168,11 +168,12 @@ class VideoController extends Controller
     /**
      * Delete video
      *
-     * Menghapus konten video di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
+     * Menghapus konten video di sekolah tersebut berdasarkan Video YT ID. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
     #[Group('Video')]
-    public function destroy(Video $video)
+    public function destroy(string $video)
     {
+        $video = Video::whereVideoId($video)->first();
         Gate::authorize('delete', $video);
         $video->delete();
 

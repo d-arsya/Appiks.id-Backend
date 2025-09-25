@@ -116,11 +116,12 @@ class ArticleController extends Controller
     /**
      * Delete article
      *
-     * Menghapus konten artikel di sekolah tersebut. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
+     * Menghapus konten artikel di sekolah tersebut berdasarkan slug. Hanya bisa dilakukan oleh Admin TU di sekolah tersebut.
      */
     #[Group('Article')]
-    public function destroy(Article $article)
+    public function destroy(string $article)
     {
+        $article = Article::whereSlug($article)->first();
         Gate::authorize('delete', $article);
         $article->delete();
 

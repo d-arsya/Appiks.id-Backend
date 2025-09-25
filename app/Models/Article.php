@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Article extends Model
 {
@@ -16,6 +17,17 @@ class Article extends Model
     protected $casts = [
         'content' => 'array',
     ];
+
+    protected static function booted()
+    {
+        static::deleting(function ($article) {
+            $path = str_replace(env('APP_URL').'/storage/', '', $article->thumbnail);
+
+            if (Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
+        });
+    }
 
     public function tags()
     {

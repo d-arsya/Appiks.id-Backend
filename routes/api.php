@@ -21,6 +21,7 @@ Route::get('user/bulk/template', [UserController::class, 'getTemplate']);
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
+    Route::get('room-student-count', [RoomController::class, 'roomStudentCount']);
     Route::get('check-username', [AuthController::class, 'checkUsername']);
     Route::get('mood_record/recap/{month}', [MoodRecordController::class, 'recapPerMonth']);
     Route::get('mood_record/check', [MoodRecordController::class, 'check']);
@@ -43,7 +44,7 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
     Route::patch('edit-profile', [UserController::class, 'editProfile']);
     Route::delete('user/{user:username}', [UserController::class, 'destroy']);
-    Route::apiResource('room', RoomController::class)->only(['index']);
+    Route::apiResource('room', RoomController::class)->only(['index', 'store']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('articles', ArticleController::class)->except(['show', 'update']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
@@ -84,6 +85,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('today-user', [UserController::class, 'getTodayUser']);
         Route::get('today-content', [VideoController::class, 'getTodayContent']);
         Route::get('content', [DashboardController::class, 'content']);
+        Route::get('content-statistics', [DashboardController::class, 'contentStatistics']);
     });
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });
