@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('thumbnail');
             $table->string('duration');
             $table->string('channel');
-            $table->integer('views');
+            $table->string('views');
             $table->string('video_id');
             $table->timestamps();
         });

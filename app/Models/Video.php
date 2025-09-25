@@ -11,6 +11,8 @@ class Video extends Model
 
     protected $guarded = [];
 
+    protected $casts = ['views' => 'integer'];
+
     protected $hidden = ['updated_at', 'school_id'];
 
     public function tags()
