@@ -175,9 +175,10 @@ class VideoController extends Controller
     {
         $video = Video::whereVideoId($video)->first();
         Gate::authorize('delete', $video);
+        $data = $video->toArray();
         $video->delete();
 
-        return $this->delete();
+        return $this->delete($data);
     }
 
     /**

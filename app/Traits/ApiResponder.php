@@ -13,11 +13,12 @@ trait ApiResponder
         ], $status);
     }
 
-    protected function delete($message = 'Success', $status = 204)
+    protected function delete($data = null, $status = 200)
     {
         return response()->json([
             'success' => true,
-            'message' => $message,
+            'message' => 'Deleted',
+            'data' => $data,
         ], $status);
     }
 

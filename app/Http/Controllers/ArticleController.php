@@ -123,9 +123,10 @@ class ArticleController extends Controller
     {
         $article = Article::whereSlug($article)->first();
         Gate::authorize('delete', $article);
+        $data = $article->toArray();
         $article->delete();
 
-        return $this->delete();
+        return $this->delete($data);
     }
 
     /**

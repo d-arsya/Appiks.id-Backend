@@ -92,8 +92,9 @@ class QuoteController extends Controller
     public function destroy(Quote $quote)
     {
         Gate::allowIf(fn (User $user) => $user->role == 'admin' && $user->school_id == $quote->school_id);
+        $data = $quote->toArray();
         $quote->delete();
 
-        return $this->delete();
+        return $this->delete($data);
     }
 }

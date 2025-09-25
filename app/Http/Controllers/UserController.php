@@ -86,9 +86,10 @@ class UserController extends Controller
 
             return false;
         });
+        $copy = $user->toArray();
         $user->delete();
 
-        return $this->delete();
+        return $this->delete($copy);
     }
 
     /**
