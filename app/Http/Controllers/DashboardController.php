@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\MoodRecord;
 use App\Models\Quote;
 use App\Models\Report;
+use App\Models\School;
 use App\Models\Sharing;
 use App\Models\User;
 use App\Models\Video;
@@ -161,6 +162,26 @@ class DashboardController extends Controller
             'users_count' => $users_count,
             'content_count' => $videos_count + $articles_count,
             'content_today_count' => $content_today_count,
+        ]);
+    }
+
+    /**
+     * Dashboard super admin datas
+     *
+     * Mendapatkan data jumlah sekolah, Admin TU.
+     */
+    #[Group('Dashboard')]
+    public function super()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'super';
+        });
+        $school_count = School::count();
+        $admin_count = User::whereRole('admin')->count();
+
+        return $this->success([
+            'school_count' => (int) $school_count,
+            'admin_count' => (int) $admin_count,
         ]);
     }
 

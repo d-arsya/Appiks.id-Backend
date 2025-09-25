@@ -26,13 +26,13 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|string',
             'username' => 'required|string|unique:users,username',
             'identifier' => 'required|digits_between:8,10|unique:users,identifier',
-            'phone' => 'required|digits_between:8,10|unique:users,phone',
+            'phone' => 'required|digits_between:8,13|unique:users,phone',
             'role' => 'required|string|in:teacher,headteacher,counselor',
         ];
     }
 
     protected function passedValidation()
     {
-        $this->merge(['school_id' => Auth::user()->school_id]);
+        $this->merge(['school_id' => Auth::user()->school_id, 'username' => strtolower($this->username)]);
     }
 }

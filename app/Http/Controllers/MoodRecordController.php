@@ -135,16 +135,26 @@ class MoodRecordController extends Controller
 
     /**
      * Get mood trends a year
+     *
+     * Mendapatkan trend mood dalam satu tahun
      */
     #[Group('Mood Record')]
     public function getMoodTrend()
     {
         Gate::authorize('dashboard-data');
 
-        $moods = MoodRecord::selectRaw('MONTH(recorded) as month, status, COUNT(*) as total')
-            ->groupBy('month', 'status')
-            ->orderBy('month')
-            ->get();
+        if (Auth::user()->role == 'super') {
+            $moods = MoodRecord::selectRaw('MONTH(recorded) as month, status, COUNT(*) as total')
+                ->groupBy('month', 'status')
+                ->orderBy('month')
+                ->get();
+        } else {
+            $students = Auth::user()->school->students->pluck('id');
+            $moods = MoodRecord::whereIn('user_id', $students)->selectRaw('MONTH(recorded) as month, status, COUNT(*) as total')
+                ->groupBy('month', 'status')
+                ->orderBy('month')
+                ->get();
+        }
 
         // group per bulan
         $grouped = $moods->groupBy('month');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateAdminRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
@@ -58,6 +59,17 @@ class UserController extends Controller
         $users = Auth::user()->school->users()->whereDate('created_at', now())->count();
 
         return $this->success(['count' => (int) $users]);
+    }
+
+    /**
+     * Create new admin of the school
+     */
+    #[Group('User')]
+    public function adminCreate(CreateAdminRequest $request)
+    {
+        $user = User::create($request->all());
+
+        return $this->success(new UserResource($user));
     }
 
     /**
@@ -169,7 +181,7 @@ class UserController extends Controller
                     }),
                 ],
                 'name' => 'string',
-                'password' => 'nullable|string|min:8', // optional password
+                'password' => 'nullable|string|min:8',
             ]);
             $data['room_id'] = Room::whereCode($data['room_id'])->pluck('id')[0];
             $data['mentor_id'] = User::whereIdentifier($data['mentor_id'])->pluck('id')[0];
@@ -179,11 +191,19 @@ class UserController extends Controller
                 'phone' => "string|unique:users,phone,{$user->id}",
                 'identifier' => "string|unique:users,identifier,{$user->id}",
                 'name' => 'string',
-                'password' => 'nullable|string|min:8', // optional password
+                'password' => 'nullable|string|min:8',
+            ]);
+        } elseif ($user->role == 'admin') {
+            $data = $request->validate([
+                'username' => "string|unique:users,username,{$user->id}",
+                'phone' => "string|unique:users,phone,{$user->id}",
+                'identifier' => "string|unique:users,identifier,{$user->id}",
+                'name' => 'string',
+                'school_id' => 'integer|exists:schools,id',
+                'password' => 'nullable|string|min:8',
             ]);
         }
 
-        // If password provided, hash it. Otherwise remove it from $data.
         if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {

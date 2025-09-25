@@ -3,11 +3,13 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -39,6 +41,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('user/bulk', [UserController::class, 'bulkCreate']);
+    Route::post('user/admin', [UserController::class, 'adminCreate']);
     Route::post('article-update/{article}', [ArticleController::class, 'update']);
     Route::patch('profile', [UserController::class, 'profile']);
     Route::patch('edit-user/{user:username}', [UserController::class, 'edit']);
@@ -49,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('articles', ArticleController::class)->except(['show', 'update']);
     Route::apiResource('quote', QuoteController::class)->except(['update']);
     Route::apiResource('mood_record', MoodRecordController::class)->except(['destroy', 'update']);
+    Route::apiResource('school', SchoolController::class);
     Route::controller(SharingController::class)->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
         Route::post('sharing', 'store');
@@ -65,6 +69,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report/{report}', 'view');
     });
     Route::prefix('dashboard')->group(function () {
+        Route::get('super', [DashboardController::class, 'super']);
         Route::get('headteacher', [DashboardController::class, 'headteacher']);
         Route::get('teacher', [DashboardController::class, 'teacher']);
         Route::get('admin', [DashboardController::class, 'admin']);
@@ -80,6 +85,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report-graph', [ReportController::class, 'getReportGraph']);
         Route::get('mood-trends', [MoodRecordController::class, 'getMoodTrend']);
         Route::get('mood-graph', [MoodRecordController::class, 'getMoodGraph']);
+        Route::get('mood-statistics', [MoodRecordController::class, 'moodStatistics']);
         Route::get('latest-content', [VideoController::class, 'getLatestContent']);
         Route::get('latest-user', [UserController::class, 'getLatestUser']);
         Route::get('today-user', [UserController::class, 'getTodayUser']);
@@ -90,3 +96,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('mood-record/pattern/{user:username}/{type}', [MoodRecordController::class, 'moodHistory'])->whereIn('type', ['monthly', 'weekly']);
 });
 Route::get('tag', [TagController::class, 'index']);
+Route::controller(LocationController::class)->group(function () {
+    Route::get('province', 'province')->name('province');
+    Route::get('city/{province}', 'city')->name('city');
+    Route::get('district/{city}', 'district')->name('district');
+    Route::get('village/{district}', 'village')->name('village');
+});

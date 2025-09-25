@@ -15,6 +15,12 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('address');
+            $table->string('phone')->unique();
+            $table->string('email')->unique();
+            $table->string('district');
+            $table->string('city');
+            $table->string('province');
             $table->timestamps();
         });
         Schema::create('rooms', function (Blueprint $table) {
@@ -23,6 +29,15 @@ return new class extends Migration
             $table->enum('level', ['X', 'XI', 'XII']);
             $table->char('code', 8)->unique();
             $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+        Schema::create('locations', function (Blueprint $table) {
+            $table->id();
+            $table->string('postalcode');
+            $table->string('village');
+            $table->string('district');
+            $table->string('city');
+            $table->string('province');
             $table->timestamps();
         });
     }
@@ -34,5 +49,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('schools');
         Schema::dropIfExists('rooms');
+        Schema::dropIfExists('locations');
     }
 };

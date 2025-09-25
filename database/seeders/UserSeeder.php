@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
             'counselor_id' => null,
             'mentor_id' => null,
             'room_id' => null,
-            'school_id' => $sch,
+            'school_id' => null,
         ]);
         User::factory()->create([
             'username' => 'kepsek',

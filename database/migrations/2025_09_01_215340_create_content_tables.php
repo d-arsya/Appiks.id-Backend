@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(School::class);
+            $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->string('thumbnail');
@@ -29,7 +29,7 @@ return new class extends Migration
         });
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(School::class);
+            $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description');

@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string('password')->default(Hash::make(config('app.default_password')));
             $table->boolean('verified')->default(false);
             $table->enum('role', ['super', 'admin', 'teacher', 'student', 'counselor', 'headteacher'])->default('student');
-            $table->foreignIdFor(User::class, 'mentor_id')->nullable()->constrained()->onDelete('restrict');
-            $table->foreignIdFor(User::class, 'counselor_id')->nullable()->constrained()->onDelete('restrict');
-            $table->foreignIdFor(Room::class)->nullable()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class, 'mentor_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignIdFor(User::class, 'counselor_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignIdFor(Room::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(School::class)->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });

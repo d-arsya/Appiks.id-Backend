@@ -35,7 +35,7 @@ class AuthController extends Controller
             'verified' => $user->verified,
             'room' => $user->room->name ?? null,
             'mentor' => $user->mentor->name ?? null,
-            'school' => $user->school->name,
+            'school' => $user->school->name ?? null,
         ])->attempt($credentials)) {
             return $this->error('Unauthorized', 401, null);
         }

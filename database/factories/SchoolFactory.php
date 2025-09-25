@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,11 +17,18 @@ class SchoolFactory extends Factory
      */
     public function definition(): array
     {
+        $loc = Location::inRandomOrder()->first();
         $variants = fake()->randomElement(['SD', 'SMP', 'SMA', 'MI', 'MTS', 'MA']);
         $name = $variants.' '.fake()->name();
 
         return [
             'name' => $name,
+            'phone' => fake()->phoneNumber(),
+            'email' => fake()->safeEmail(),
+            'district' => $loc->district,
+            'city' => $loc->city,
+            'province' => $loc->province,
+            'address' => "{$loc->district}, {$loc->city}, {$loc->province}",
         ];
     }
 }
