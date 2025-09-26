@@ -24,15 +24,16 @@ class CreateAdminRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'username' => 'required|string|unique:users,username|regex:/^[a-z0-9_]+$/',
             'identifier' => 'required|digits_between:8,10|unique:users,identifier',
-            'phone' => 'required|digits_between:8,13|unique:users,phone',
             'school_id' => 'required|integer|exists:schools,id',
         ];
     }
 
     protected function passedValidation()
     {
-        return $this->merge(['role' => 'admin', 'username' => strtolower($this->username)]);
+        return $this->merge([
+            'role' => 'admin',
+            'username' => $this->identifier,
+        ]);
     }
 }
