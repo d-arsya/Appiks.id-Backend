@@ -54,7 +54,11 @@ class RoomController extends Controller
     public function index()
     {
         Gate::authorize('dashboard-data');
-        $rooms = Room::with('school')->where('school_id', Auth::user()->school_id)->get();
+        if (Auth::user()->role == 'super') {
+            $rooms = Room::with('school')->withCount('students')->get();
+        } else {
+            $rooms = Room::with('school')->withCount('students')->where('school_id', Auth::user()->school_id)->get();
+        }
 
         return $this->success(RoomResource::collection($rooms));
     }
