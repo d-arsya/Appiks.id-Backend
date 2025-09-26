@@ -233,7 +233,7 @@ class MoodRecordController extends Controller
         Gate::allowIf(function (User $authUser) use ($user) {
             return ($authUser->role == 'counselor' && $authUser->id === $user->counselor_id) || $authUser->role == 'teacher' && $authUser->id === $user->mentor_id;
         });
-        $request->validate(['type' => 'required|in:weekly,monthly']);
+        // $request->validate(['type' => 'required|in:weekly,monthly']);
         $query = MoodRecord::where('user_id', $user->id);
 
         if ($type === 'monthly') {
