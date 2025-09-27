@@ -70,6 +70,12 @@ return new class extends Migration
             $table->string('owner');
             $table->integer('expiration');
         });
+        Schema::create('gemini_api_token', function (Blueprint $table) {
+            $table->id();
+            $table->string('token');
+            $table->boolean('used');
+            $table->integer('quota');
+        });
     }
 
     /**
@@ -84,5 +90,6 @@ return new class extends Migration
         Schema::dropIfExists('failed_jobs');
         Schema::dropIfExists('cache');
         Schema::dropIfExists('cache_locks');
+        Schema::dropIfExists('gemini_api_token');
     }
 };

@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            GeminiApi::class,
             LocationSeeder::class,
             SchoolSeeder::class,
             RoomSeeder::class,
