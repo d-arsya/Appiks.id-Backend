@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -70,6 +71,15 @@ return new class extends Migration
             $table->string('owner');
             $table->integer('expiration');
         });
+
+        Schema::create('app_configuration', function (Blueprint $table) {
+            $table->string('key')->primary();
+            $table->string('value');
+        });
+        DB::table('app_configuration')->insert([
+            'key' => 'GEMINI_TOKEN_USED',
+            'value' => '1',
+        ]);
     }
 
     /**
