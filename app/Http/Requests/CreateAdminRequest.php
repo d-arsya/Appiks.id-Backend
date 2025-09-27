@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class CreateAdminRequest extends FormRequest
 {
@@ -28,13 +29,23 @@ class CreateAdminRequest extends FormRequest
             'username' => 'required|unique:users,username',
             'identifier' => 'required|digits_between:8,10|unique:users,identifier',
             'school_id' => 'required|integer|exists:schools,id',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+            ],
         ];
     }
 
     protected function passedValidation()
     {
         return $this->merge([
+            'verified' => true,
             'role' => 'admin',
+            'password' => Hash::make($this->password),
         ]);
     }
 }
