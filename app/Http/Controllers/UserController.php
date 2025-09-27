@@ -170,7 +170,7 @@ class UserController extends Controller
     /**
      * Edit user data (by admin)
      *
-     * Kalau yang diedit adalah siswa maka butuh room_id (berupa 8 karakter kode kelas) dan mentor_id (berupa NIP Guru Wali). Selebihnya tidak
+     * Kalau yang diedit adalah siswa maka butuh room_id (berupa 8 karakter kode kelas) dan mentor_id (berupa NIP Guru Wali). Jika admin yang diedit maka butuh school_id. Selainnya hanya username, phone, identifier, name, dan password
      */
     #[Group('User')]
     public function edit(Request $request, User $user)
