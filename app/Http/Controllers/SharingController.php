@@ -119,4 +119,18 @@ class SharingController extends Controller
 
         return $this->success(new SharingResource($sharing));
     }
+
+    /**
+     * Get latest 2 sharing
+     */
+    #[Group('Notification')]
+    public function latestOfStudent()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'student';
+        });
+        $sharings = Sharing::whereUserId(Auth::id())->latest()->take(2)->get();
+
+        return $this->success(SharingResource::collection($sharings));
+    }
 }

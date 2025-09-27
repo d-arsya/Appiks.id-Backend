@@ -49,7 +49,6 @@ class ReportController extends Controller
         $user = Auth::user();
         $reports = Report::whereCreatedAt(Carbon::today())->whereIn('user_id', $user->counselored->pluck('id'))->get();
 
-        $countsByStatus = $reports->countBy('status');
         $countsByStatusArray = $reports->countBy('status')->toArray();
 
         return $this->success([
@@ -173,5 +172,19 @@ class ReportController extends Controller
             'report' => (object) $report,
             'sharing' => (object) $sharing,
         ]);
+    }
+
+    /**
+     * Get latest 2 report
+     */
+    #[Group('Notification')]
+    public function latestOfStudent()
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'student';
+        });
+        $reports = Report::with(['counselor'])->whereUserId(Auth::id())->latest()->take(2)->get();
+
+        return $this->success(ReportResource::collection($reports));
     }
 }

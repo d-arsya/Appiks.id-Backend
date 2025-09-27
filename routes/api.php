@@ -119,4 +119,9 @@ Route::middleware('auth:api')->group(function () {
             Route::post('users', 'store');
         });
     });
+
+    Route::prefix('notification')->group(function () {
+        Route::get('latest-sharing', [SharingController::class, 'latestOfStudent']);
+        Route::get('latest-report', [ReportController::class, 'latestOfStudent']);
+    });
 });
