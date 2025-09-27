@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MoodRecordSendRequest;
 use App\Http\Resources\MoodRecordResource;
 use App\Models\MoodRecord;
+use App\Models\School;
 use App\Models\User;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
@@ -28,6 +29,19 @@ class MoodRecordController extends Controller
         $mood = MoodRecord::where('user_id', Auth::id())->where('recorded', Carbon::today())->get();
 
         return $this->success(['can' => $mood->count() == 0]);
+    }
+
+    /**
+     * Get all mood records of student
+     *
+     * Mendapatkan semua data mood seorang siswa
+     */
+    #[Group('Mood Record')]
+    public function recordsOfStudent(User $user)
+    {
+        $mood = $user->mood()->orderBy('recorded', 'desc')->get();
+
+        return $this->success(MoodRecordResource::collection($mood));
     }
 
     /**
@@ -262,5 +276,64 @@ class MoodRecordController extends Controller
         $mean = $secure > $insecure ? 'secure' : 'insecure';
 
         return $this->success(compact('recap', 'mean', 'moods', 'user'));
+    }
+
+    /**
+     * Get mood history of the schools
+     *
+     * Mendapatkan rekapitulasi rekam mood siswa dalam satu sekolah. Tersedia opsi bulanan dan mingguan (terakhir). Hanya bisa diakses oleh Super Admin
+     *
+     * @param  string  $type  weekly | monthly
+     *
+     * @response array{
+     *   data: array{
+     *     moods: array<array{
+     *       recorded: "2025-08-12",
+     *       status: "happy"|"neutral"|"sad"|"angry",
+     *       total: 1,
+     *     }>,
+     *     school: array{
+     *       name: string,
+     *       phone: string
+     *     }
+     *   }
+     * }
+     */
+    #[Group('Mood Record')]
+    public function getMoodTrendSchool(Request $request, School $school, string $type)
+    {
+        Gate::allowIf(function (User $authUser) {
+            return $authUser->role == 'super';
+        });
+        $query = MoodRecord::whereIn('user_id', $school->students->pluck('id')->toArray());
+
+        if ($type === 'monthly') {
+            $query->whereMonth('recorded', now()->month)
+                ->whereYear('recorded', now()->year);
+        } elseif ($type === 'weekly') {
+            $query->whereBetween('recorded', [
+                now()->startOfWeek(),
+                now()->endOfWeek(),
+            ]);
+        }
+
+        $moods = $query->orderBy('recorded')->get()
+            ->groupBy('recorded')
+            ->map(function ($items) {
+                return $items->groupBy('status')
+                    ->map->count()
+                    ->sortDesc()
+                    ->map(function ($count, $status) use ($items) {
+                        return [
+                            'recorded' => $items->first()->recorded,
+                            'status' => $status,
+                            'total' => $count,
+                        ];
+                    })
+                    ->first(); // ambil status dengan jumlah terbanyak
+            })
+            ->values();
+
+        return $this->success(compact('moods', 'school'));
     }
 }

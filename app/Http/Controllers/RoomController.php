@@ -64,6 +64,20 @@ class RoomController extends Controller
     }
 
     /**
+     * Get room detail
+     *
+     * Digunakan untuk mendapatkan detail kelas
+     */
+    #[Group('Room')]
+    public function show(string $code)
+    {
+        Gate::authorize('dashboard-data');
+        $room = Room::whereCode($code)->with(['students', 'students.mentor', 'school'])->withCount('students')->first();
+
+        return $this->success(new RoomResource($room));
+    }
+
+    /**
      * Create room
      *
      * Digunakan membuat kelas baru. Hanya bisa dilakukan oleh Admin TU

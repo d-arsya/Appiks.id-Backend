@@ -7,6 +7,7 @@ use App\Http\Resources\SchoolResource;
 use App\Models\School;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class SchoolController extends Controller
@@ -55,9 +56,18 @@ class SchoolController extends Controller
      * Update school detail
      */
     #[Group('School')]
-    public function update(CreateSchoolRequest $request, School $school)
+    public function update(Request $request, School $school)
     {
-        $school->update($request->validated());
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'required|digits_between:8,13|unique:schools,phone,'.$school->id,
+            'email' => 'required|email|unique:schools,email,'.$school->id.'|max:255',
+            'district' => 'required|string|exists:locations,district|max:255',
+            'city' => 'required|string|exists:locations,city|max:255',
+            'province' => 'required|string|exists:locations,province|max:255',
+        ]);
+        $school->update($request->all());
 
         return $this->created(new SchoolResource($school));
     }

@@ -16,6 +16,7 @@ class RoomResource extends JsonResource
     {
         return array_merge(parent::toArray($request), [
             'mention' => "Kelas {$this->level} {$this->name}",
+            'students' => UserResource::collection($this->whenLoaded('students')),
             'school' => new SchoolResource($this->whenLoaded('school')),
             'students_count' => $this->whenCounted('students'),
         ]);
