@@ -176,7 +176,7 @@ class UserController extends Controller
     public function edit(Request $request, User $user)
     {
         Gate::allowIf(function (User $auth) use ($user) {
-            return ($auth->role == 'admin' && $auth->school_id == $user->school_id) || $user->role == 'super';
+            return ($auth->role == 'admin' && $auth->school_id == $user->school_id) || ($auth->role == 'super');
         });
         if ($user->role == 'student') {
             $data = $request->validate([
