@@ -142,7 +142,7 @@ class UserController extends Controller
     #[Group('User')]
     public function getUserDetail(string $username)
     {
-        $user = User::with(['room', 'mentor'])->where('username', $username)->first();
+        $user = User::with(['school', 'room', 'mentor', 'counselor'])->where('username', $username)->first();
 
         return $this->success(new UserResource($user));
     }
