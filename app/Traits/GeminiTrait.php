@@ -5,6 +5,7 @@ namespace App\Traits;
 use Gemini\Data\GenerationConfig;
 use Gemini\Laravel\Facades\Gemini;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 trait GeminiTrait
 {
@@ -31,5 +32,23 @@ trait GeminiTrait
         DB::table('gemini_api_token')->where('id', $nextToken->id)->update(['used' => true]);
 
         return $result;
+    }
+
+    protected function sendLlm(string $text, int $maxToken = 3000)
+    {
+        $payload = [
+            'model' => 'gemma3:latest',
+            'prompt' => $text,
+            'stream' => false,
+            'num_count' => $maxToken,
+        ];
+
+        $response = Http::withHeaders([
+            'X-API-Key' => env('IMAGE_COMPRESSOR_API_KEY'),
+        ])->post('https://llm.appiks.id/api/generate', $payload);
+
+        $result = $response->json();
+
+        return $result['data']['response'] ?? 'Could not parse response.';
     }
 }

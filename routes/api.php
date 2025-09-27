@@ -3,7 +3,6 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\GeminiController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MoodRecordController;
 use App\Http\Controllers\QuestionnaireController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('coba', [QuestionnaireController::class, 'coba']);
 Route::get('/', function () {
     return response()->json('OK');
 });
@@ -79,10 +79,6 @@ Route::middleware('auth:api')->group(function () {
         Route::get('report/student/{user:username}', 'reportOfStudent');
         Route::get('report', 'index');
         Route::get('report/{report}', 'show');
-    });
-    Route::controller(GeminiController::class)->group(function () {
-        Route::get('gemini-token', 'index');
-        Route::post('gemini-token/{gemini}', 'update');
     });
     Route::apiResource('room', RoomController::class)->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::apiResource('video', VideoController::class)->except(['show']);
