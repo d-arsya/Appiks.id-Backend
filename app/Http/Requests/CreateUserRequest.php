@@ -24,6 +24,8 @@ class CreateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'username' => 'required|unique:users,username',
+            'phone' => 'required|digits_between:10,15|unique:users,username',
             'identifier' => 'required|digits_between:8,10|unique:users,identifier',
             'role' => 'required|string|in:teacher,headteacher,counselor',
         ];
@@ -33,7 +35,6 @@ class CreateUserRequest extends FormRequest
     {
         $this->merge([
             'school_id' => Auth::user()->school_id,
-            'username' => $this->identifier,
         ]);
     }
 }

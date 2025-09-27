@@ -24,6 +24,8 @@ class CreateAdminRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'phone' => 'required|digits_between:10,13|unique:users,phone',
+            'username' => 'required|unique:users,username',
             'identifier' => 'required|digits_between:8,10|unique:users,identifier',
             'school_id' => 'required|integer|exists:schools,id',
         ];
@@ -33,7 +35,6 @@ class CreateAdminRequest extends FormRequest
     {
         return $this->merge([
             'role' => 'admin',
-            'username' => $this->identifier,
         ]);
     }
 }
