@@ -9,6 +9,7 @@ use App\Http\Requests\RescheduleReportRequest;
 use App\Http\Resources\ReportResource;
 use App\Models\Report;
 use App\Models\Sharing;
+use App\Models\User;
 use App\Traits\ApiResponder;
 use Carbon\Carbon;
 use Dedoc\Scramble\Attributes\Group;
@@ -75,11 +76,27 @@ class ReportController extends Controller
      * Get report detail
      */
     #[Group('Report')]
-    public function view(Report $report)
+    public function show(Report $report)
     {
         Gate::authorize('view', $report);
 
         return $this->created(new ReportResource($report));
+    }
+
+    /**
+     * Get all report of student
+     *
+     * Mendapatkan semua konseling seorang siswa. Hanya bisa diakses oleh Super Admin
+     */
+    #[Group('Report')]
+    public function reportOfStudent(User $user)
+    {
+        Gate::allowIf(function (User $authUser) use ($user) {
+            return $authUser->role == 'super' && $user->role == 'student';
+        });
+        $reports = Report::with('counselor')->whereUserId($user->id)->get();
+
+        return $this->created(ReportResource::collection($reports));
     }
 
     /**

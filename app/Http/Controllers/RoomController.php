@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateRoomRequest;
 use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use App\Models\School;
 use App\Models\User;
 use App\Traits\ApiResponder;
 use Dedoc\Scramble\Attributes\Group;
@@ -59,6 +60,22 @@ class RoomController extends Controller
         } else {
             $rooms = Room::with('school')->withCount('students')->where('school_id', Auth::user()->school_id)->get();
         }
+
+        return $this->success(RoomResource::collection($rooms));
+    }
+
+    /**
+     * Get all rooms of the school
+     *
+     * Digunakan untuk mendapatkan kelas dari suatu sekolah. Hanya bisa diakses oleh Super Admin
+     */
+    #[Group('Room')]
+    public function roomOfSchool(Request $request, School $school)
+    {
+        Gate::allowIf(function (User $user) {
+            return $user->role == 'super';
+        });
+        $rooms = Room::with('school')->withCount('students')->where('school_id', $school->id)->get();
 
         return $this->success(RoomResource::collection($rooms));
     }

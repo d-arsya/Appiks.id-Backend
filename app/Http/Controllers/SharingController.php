@@ -79,16 +79,32 @@ class SharingController extends Controller
     /**
      * Get sharing detail
      *
-     * Mendapatkan detail curhatan. Hanya bisa diakses oleh murid atau BK dari murid tersebut
+     * Mendapatkan detail curhatan. Hanya bisa diakses oleh murid, Super Admin, atau BK dari murid tersebut
      */
     #[Group('Sharing')]
     public function show(Sharing $sharing)
     {
         Gate::allowIf(function (User $authUser) use ($sharing) {
-            return ($authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id) || $authUser->role == 'student' && $authUser->id === $sharing->user_id;
+            return $authUser->role == 'super' || ($authUser->role == 'counselor' && $authUser->id === $sharing->user->counselor_id) || ($authUser->role == 'student' && $authUser->id === $sharing->user_id);
         });
 
         return $this->success(new SharingResource($sharing));
+    }
+
+    /**
+     * Get sharing of student
+     *
+     * Mendapatkan semua curhatan siswa. Hanya bisa diakses oleh super admin
+     */
+    #[Group('Sharing')]
+    public function sharingOfStudent(User $user)
+    {
+        Gate::allowIf(function (User $auth) use ($user) {
+            return $auth->role == 'super' && $user->role == 'student';
+        });
+        $sharings = Sharing::whereUserId($user->id)->get();
+
+        return $this->success(SharingResource::collection($sharings));
     }
 
     /**

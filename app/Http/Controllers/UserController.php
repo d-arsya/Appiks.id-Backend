@@ -116,12 +116,22 @@ class UserController extends Controller
     }
 
     /**
-     * Get all users data at one school by its type
+     * Get all users data by its type
+     *
+     * Jika dilakukan oleh Super Admin maka semua data didalam Sistem, selainnya maka hanya di sekolah tersebut
      */
     #[Group('User')]
     public function getUsersByType(string $type)
     {
-        $users = User::whereRole($type)->whereSchoolId(Auth::user()->school_id)->get();
+        Gate::allowIf(function (User $user) {
+            return $user->role != 'student';
+        });
+        if (Auth::user()->role == 'super') {
+            $users = User::with('school')->whereRole($type)->get();
+        } else {
+
+            $users = User::whereRole($type)->whereSchoolId(Auth::user()->school_id)->get();
+        }
 
         return $this->success(UserResource::collection($users));
     }

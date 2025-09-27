@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('room-student-count', [RoomController::class, 'roomStudentCount']);
+    Route::get('room/school/{school}', [RoomController::class, 'roomOfSchool']);
     Route::get('content', [VideoController::class, 'allContents']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByaTag']);
     Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
@@ -65,6 +66,7 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('sharing/reply/{sharing}', 'reply');
         Route::post('sharing', 'store');
         Route::get('sharing', 'index');
+        Route::get('sharing/student/{user:username}', 'sharingOfStudent');
         Route::get('sharing/{sharing}', 'show');
     });
     Route::controller(ReportController::class)->group(function () {
@@ -73,8 +75,9 @@ Route::middleware('auth:api')->group(function () {
         Route::patch('report/cancel/{report}', 'cancel');
         Route::patch('report/reschedule/{report}', 'reschedule');
         Route::post('report', 'store');
+        Route::get('report/student/{user:username}', 'reportOfStudent');
         Route::get('report', 'index');
-        Route::get('report/{report}', 'view');
+        Route::get('report/{report}', 'show');
     });
     Route::apiResource('room', RoomController::class)->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::apiResource('video', VideoController::class)->except(['show']);
@@ -105,7 +108,7 @@ Route::middleware('auth:api')->group(function () {
             Route::get('student', 'getStudents');
             Route::get('users', 'getUsers');
             Route::get('users/{username}', 'getUserDetail');
-            Route::get('users/type/{type}', 'getUsersByType')->whereIn('type', ['student', 'teacher', 'counselor', 'headteacher']);
+            Route::get('users/type/{type}', 'getUsersByType')->whereIn('type', ['student', 'teacher', 'counselor', 'headteacher', 'admin']);
             Route::get('latest-user', 'getLatestUser');
             Route::get('today-user', 'getTodayUser');
             Route::post('users', 'store');
