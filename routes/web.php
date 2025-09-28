@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'docs');
 Route::get('reset', function () {
-    Artisan::call('migrate:fresh --seed');
+    Artisan::call('migrate:fresh-backup');
 
     return 'reset success';
 });

@@ -13,9 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AiGenerated::class,
-            GeminiApi::class,
-            LocationSeeder::class,
+            // AiGenerated::class,
+            // GeminiApi::class,
+            // LocationSeeder::class,
             SchoolSeeder::class,
             RoomSeeder::class,
             UserSeeder::class,
