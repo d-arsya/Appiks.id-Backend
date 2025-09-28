@@ -24,7 +24,7 @@ class CreateSchoolRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:schools,name',
             'address' => 'required|string|max:255',
             'phone' => 'required|digits_between:8,13|max:20|unique:schools,phone',
             'email' => 'required|email|max:255|unique:schools,email',

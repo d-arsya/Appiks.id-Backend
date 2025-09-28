@@ -33,7 +33,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('room-student-count', [RoomController::class, 'roomStudentCount']);
-    Route::get('room/school/{school}', [RoomController::class, 'roomOfSchool']);
+    Route::get('room/school/{school:name}', [RoomController::class, 'roomOfSchool']);
     Route::get('content', [VideoController::class, 'allContents']);
     Route::get('video/tag/{tag}', [VideoController::class, 'getByaTag']);
     Route::get('video/{video:video_id}', [VideoController::class, 'getVideoDetailId']);
@@ -52,7 +52,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('mood_record/today', 'today');
         Route::get('mood_record/streaks', 'streaks');
         Route::get('mood-record/student/{user:username}', 'recordsOfStudent');
-        Route::get('mood-trends/{school}/{type}', 'getMoodTrendSchool')->whereIn('type', ['monthly', 'weekly']);
+        Route::get('mood-trends/{school:name}/{type}', 'getMoodTrendSchool')->whereIn('type', ['monthly', 'weekly']);
         Route::get('mood-record/pattern/{user:username}/{type}', 'moodHistory')->whereIn('type', ['monthly', 'weekly']);
     });
     Route::controller(UserController::class)->group(function () {
