@@ -198,7 +198,6 @@ class QuestionnaireController extends Controller
             'description' => $first->archtype_description,
             'power' => $first->archtype_power,
         ];
-
         $mission = $this->missionInsecureTest([$archetype, $second, $third]);
 
         return ['archtype' => $archetype, 'learn' => $second, 'fuel' => $third, 'mission' => $mission];

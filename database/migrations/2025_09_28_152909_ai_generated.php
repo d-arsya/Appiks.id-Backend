@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('ai_generated', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique();
-            $table->string('section');
             $table->json('answer')->nullable();
             $table->timestamps();
         });
