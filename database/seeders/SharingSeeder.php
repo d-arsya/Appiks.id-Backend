@@ -39,8 +39,8 @@ class SharingSeeder extends Seeder
                 } else {
                     // empty
                     $attrs['reply'] = null;
-                    $attrs['replied_by'] = null;
                     $attrs['replied_at'] = null;
+                    $attrs['replied_by'] = $student->counselor->name;
                     $attrs['user_id'] = $student->id;
                     $attrs['created_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
                     $attrs['updated_at'] = Carbon::parse($date)->format('Y-m-d H:i:s');
