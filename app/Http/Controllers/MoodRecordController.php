@@ -245,7 +245,7 @@ class MoodRecordController extends Controller
     public function moodHistory(Request $request, User $user, string $type)
     {
         Gate::allowIf(function (User $authUser) use ($user) {
-            return ($authUser->role == 'counselor' && $authUser->id === $user->counselor_id) || $authUser->role == 'teacher' && $authUser->id === $user->mentor_id;
+            return ($authUser->role == 'counselor' && $authUser->id === $user->counselor_id) || ($authUser->role == 'teacher' && $authUser->id === $user->mentor_id) || $authUser->role == 'super';
         });
         // $request->validate(['type' => 'required|in:weekly,monthly']);
         $query = MoodRecord::where('user_id', $user->id);
