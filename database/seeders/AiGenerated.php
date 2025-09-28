@@ -46,24 +46,6 @@ class AiGenerated extends Seeder
                 'choices' => ['A', 'B', 'C', 'D'],
             ],
         ];
-
-        foreach ($sections as $section => $data) {
-            $keys = $this->generateKeys($data['choices'], $data['length']);
-
-            $rows = [];
-            foreach ($keys as $key) {
-                $rows[] = [
-                    'type' => 'secure',
-                    'section' => $section,
-                    'key' => $key,
-                    'answer' => null,
-                ];
-            }
-        }
-        $batchSize = 1000;
-        for ($i = 0; $i < count($rows); $i += $batchSize) {
-            DB::table('ai_generated')->insert(array_slice($rows, $i, $batchSize));
-        }
     }
 
     private function generateKeys(array $choices, int $length, string $prefix = ''): array
