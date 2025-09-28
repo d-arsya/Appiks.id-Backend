@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('email')->unique();
             $table->string('district');
-            $table->string('city');c
+            $table->string('city');
             $table->string('province');
             $table->timestamps();
         });
