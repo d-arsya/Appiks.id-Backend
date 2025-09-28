@@ -29,7 +29,6 @@ class AiGenerated extends Seeder
             $rows = [];
             foreach ($keys as $key) {
                 $rows[] = [
-                    'type' => 'insecure',
                     'section' => $section,
                     'key' => $key,
                     'answer' => null,

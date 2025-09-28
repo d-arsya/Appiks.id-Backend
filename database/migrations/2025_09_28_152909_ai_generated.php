@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('ai_generated', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['secure', 'insecure']);
             $table->string('key')->unique();
             $table->string('section');
             $table->json('answer')->nullable();
