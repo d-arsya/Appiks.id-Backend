@@ -61,7 +61,6 @@ class QuestionnaireController extends Controller
     public function analyzeQuestionnaire(AnalyzeQuestionnaireRequest $request, string $type)
     {
         $answers = $request->validated();
-        $answers = $request['answers'];
         $answers = $this->convertToAlphabet($type, $request['answers']);
         if ($type == 'insecure') {
             $result = $this->analyzeInsecureQuiz($answers);
