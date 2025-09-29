@@ -27,7 +27,7 @@ class CreateUserRequest extends FormRequest
             'name' => 'required|string',
             'username' => 'required|unique:users,username',
             'phone' => 'required|digits_between:10,15|unique:users,username',
-            'identifier' => 'required|digits_between:8,10|unique:users,identifier',
+            'identifier' => 'required|digits:18|unique:users,identifier',
             'role' => 'required|string|in:teacher,headteacher,counselor',
             'password' => [
                 'required',

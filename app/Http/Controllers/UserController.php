@@ -181,8 +181,8 @@ class UserController extends Controller
         if ($user->role == 'student') {
             $data = $request->validate([
                 'username' => "string|unique:users,username,{$user->id}",
-                'phone' => "string|unique:users,phone,{$user->id}",
-                'identifier' => "string|unique:users,identifier,{$user->id}",
+                'phone' => "string|digits_between:10,15|unique:users,phone,{$user->id}",
+                'identifier' => "string|digits:10|unique:users,identifier,{$user->id}",
                 'room_id' => 'string|exists:rooms,code',
                 'mentor_id' => [
                     'string',
@@ -191,26 +191,47 @@ class UserController extends Controller
                     }),
                 ],
                 'name' => 'string',
-                'password' => 'nullable|string|min:8',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'regex:/[a-z]/',
+                    'regex:/[A-Z]/',
+                    'regex:/[0-9]/',
+                ],
             ]);
             $data['room_id'] = Room::whereCode($data['room_id'])->pluck('id')[0];
             $data['mentor_id'] = User::whereIdentifier($data['mentor_id'])->pluck('id')[0];
         } elseif (in_array($user->role, ['teacher', 'headteacher', 'counselor'])) {
             $data = $request->validate([
                 'username' => "string|unique:users,username,{$user->id}",
-                'phone' => "string|unique:users,phone,{$user->id}",
-                'identifier' => "string|unique:users,identifier,{$user->id}",
+                'phone' => "string|digits_between:10,15|unique:users,phone,{$user->id}",
+                'identifier' => "string|digits:18|unique:users,identifier,{$user->id}",
                 'name' => 'string',
-                'password' => 'nullable|string|min:8',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'regex:/[a-z]/',
+                    'regex:/[A-Z]/',
+                    'regex:/[0-9]/',
+                ],
             ]);
         } elseif ($user->role == 'admin') {
             $data = $request->validate([
                 'username' => "string|unique:users,username,{$user->id}",
-                'phone' => "string|unique:users,phone,{$user->id}",
-                'identifier' => "string|unique:users,identifier,{$user->id}",
+                'phone' => "string|digits_between:10,15|unique:users,phone,{$user->id}",
+                'identifier' => "string|digits:18|unique:users,identifier,{$user->id}",
                 'name' => 'string',
                 'school_id' => 'integer|exists:schools,id',
-                'password' => 'nullable|string|min:8',
+                'password' => [
+                    'required',
+                    'string',
+                    'min:8',
+                    'regex:/[a-z]/',
+                    'regex:/[A-Z]/',
+                    'regex:/[0-9]/',
+                ],
             ]);
         }
 
