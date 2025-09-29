@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('key')->unique();
             $table->json('answer')->nullable();
-            $table->timestamps();
+            $table->timestamp('updated_at');
         });
     }
 

@@ -64,7 +64,7 @@ trait QuestionnaireTrait
             $hasil = $this->sendGemini($perintah, 600);
             $hasil = str_replace('```', '', $hasil);
             $hasil = str_replace('json', '', $hasil);
-            DB::table('ai_generated')->where('key', implode('', $jawaban))->update(['answer' => $hasil]);
+            DB::table('ai_generated')->where('key', implode('', $jawaban))->update(['answer' => $hasil, 'updated_at' => now()]);
         } else {
             $hasil = $ans->answer;
         }
@@ -142,7 +142,7 @@ tantangan adalah kesempatan untuk tumbuh. Coba ubah pertanyaannya dari
             $hasil = $this->sendGemini("Kombinasikan dua motivasi ini jadi 1 pertama: $ds. kedua: $da. tujukan bagi siswa SMA. Cukup singkat text tanpa formatting apapun. Ini akan menjadi bagian Bahan Bakar siswa (yang mengapresiasi dengan ucapkah terimakasih dan hebat, contoh: kamu punya kombinasi bahan bakar internal dan resilience yang kuat) maksimal 10 kata", 50);
 
             $hasil = ['text' => $hasil];
-            DB::table('ai_generated')->where('key', implode('', $jawaban))->update(['answer' => $hasil]);
+            DB::table('ai_generated')->where('key', implode('', $jawaban))->update(['answer' => $hasil, 'updated_at' => now()]);
             $hasil = $hasil['text'];
         } else {
             $hasil = $ans->answer;
