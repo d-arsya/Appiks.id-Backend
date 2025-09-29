@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(School::class);
+            $table->foreignIdFor(School::class)->constrained()->onDelete('cascade');
             $table->string('text');
             $table->string('author');
             $table->enum('type', ['secure', 'insecure', 'daily']);
