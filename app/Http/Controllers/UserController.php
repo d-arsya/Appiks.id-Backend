@@ -192,7 +192,7 @@ class UserController extends Controller
                 ],
                 'name' => 'string',
                 'password' => [
-                    'required',
+                    'nullable',
                     'string',
                     'min:8',
                     'regex:/[a-z]/',
@@ -209,7 +209,7 @@ class UserController extends Controller
                 'identifier' => "string|digits:18|unique:users,identifier,{$user->id}",
                 'name' => 'string',
                 'password' => [
-                    'required',
+                    'nullable',
                     'string',
                     'min:8',
                     'regex:/[a-z]/',
@@ -225,7 +225,7 @@ class UserController extends Controller
                 'name' => 'string',
                 'school_id' => 'integer|exists:schools,id',
                 'password' => [
-                    'required',
+                    'nullable',
                     'string',
                     'min:8',
                     'regex:/[a-z]/',

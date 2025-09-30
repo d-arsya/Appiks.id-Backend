@@ -119,6 +119,7 @@ class RoomController extends Controller
             return $user->role == 'admin' && $user->school_id == $room->school_id;
         });
         $data = $room->toArray();
+        $room->delete();
 
         return $this->success($data);
     }
