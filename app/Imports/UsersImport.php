@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class UsersImport implements ShouldQueue, ToCollection, WithChunkReading, WithHeadingRow
+class UsersImport implements ShouldQueue, ToCollection, WithChunkReading, WithColumnFormatting, WithHeadingRow
 {
     protected $mentors;
 
@@ -65,5 +67,14 @@ class UsersImport implements ShouldQueue, ToCollection, WithChunkReading, WithHe
     public function chunkSize(): int
     {
         return 1500;
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'A' => NumberFormat::FORMAT_TEXT,
+            'C' => NumberFormat::FORMAT_TEXT,
+            'D' => NumberFormat::FORMAT_TEXT,
+        ];
     }
 }
