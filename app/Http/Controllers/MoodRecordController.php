@@ -371,14 +371,10 @@ class MoodRecordController extends Controller
         });
 
         $fileName = 'exports/moods-'.now()->format('Ymd_His').'.xlsx';
-
-        // simpan ke storage/app/public/exports/...
         Excel::store(new AllMoodExport($moods), $fileName, 'public');
-
-        // ambil public url
         $url = Storage::disk('public')->url($fileName);
 
-        return $this->success($url);
+        return $this->success(compact('url'));
     }
 
     /**
@@ -418,7 +414,7 @@ class MoodRecordController extends Controller
 
         $url = Storage::disk('public')->url($fileName);
 
-        return response()->json(['url' => $url]);
+        return $this->success(compact('url'));
     }
 
     /**
@@ -456,6 +452,6 @@ class MoodRecordController extends Controller
 
         $url = Storage::disk('public')->url($fileName);
 
-        return response()->json(['url' => $url]);
+        return $this->success(compact('url'));
     }
 }
