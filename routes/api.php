@@ -54,6 +54,9 @@ Route::middleware('auth:api')->group(function () {
         Route::get('mood-record/student/{user:username}', 'recordsOfStudent');
         Route::get('mood-trends/{school:name}/{type}', 'getMoodTrendSchool')->whereIn('type', ['monthly', 'weekly']);
         Route::get('mood-record/pattern/{user:username}/{type}', 'moodHistory')->whereIn('type', ['monthly', 'weekly']);
+        Route::get('mood_record/export/today', 'exportToday');
+        Route::get('mood_record/export/{username}/weekly', 'exportWeekly');
+        Route::get('mood_record/export/{username}/monthly', 'exportMonthly');
     });
     Route::controller(UserController::class)->group(function () {
         Route::post('user/bulk', 'bulkCreate');

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AllMoodExport;
+use App\Exports\StudentMoodExport;
 use App\Http\Requests\MoodRecordSendRequest;
 use App\Http\Resources\MoodRecordResource;
 use App\Models\MoodRecord;
@@ -13,6 +15,8 @@ use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MoodRecordController extends Controller
 {
@@ -335,5 +339,123 @@ class MoodRecordController extends Controller
             ->values();
 
         return $this->success(compact('moods', 'school'));
+    }
+
+    /**
+     * Export user mood today
+     *
+     * Mendapatkan laporan excel mood siswa hari ini. bisa diakses oleh wali dan BK
+     */
+    #[Group('Export')]
+    public function exportToday()
+    {
+        Gate::allowIf(function (User $user) {
+            return in_array($user->role, ['teacher', 'counselor']);
+        });
+        if (Auth::user()->role == 'teacher') {
+            // code...
+            $student = User::whereRole('student')->whereMentorId(Auth::id());
+        } else {
+            $student = User::whereRole('student')->whereCounselorId(Auth::id());
+        }
+        $moods = MoodRecord::with(['user', 'user.room'])->whereIn('user_id', $student->pluck('id'))->where('recorded', Carbon::today())->get()->map(function ($mood) {
+            return [
+                'name' => $mood->user->name,
+                'identifier' => $mood->user->identifier,
+                'room' => 'Kelas '.$mood->user->room->level.' '.$mood->user->room->name ?? null,
+                'status' => $mood->status,
+                'type' => in_array($mood->status, ['happy', 'neutral'])
+                    ? 'Aman'
+                    : 'Tidak Aman',
+            ];
+        });
+
+        $fileName = 'exports/moods-'.now()->format('Ymd_His').'.xlsx';
+
+        // simpan ke storage/app/public/exports/...
+        Excel::store(new AllMoodExport($moods), $fileName, 'public');
+
+        // ambil public url
+        $url = Storage::disk('public')->url($fileName);
+
+        return $this->success($url);
+    }
+
+    /**
+     * Export user mood weekly
+     *
+     * Mendapatkan laporan excel mood siswa minggu ini. bisa diakses oleh wali dan BK
+     */
+    #[Group('Export')]
+    public function exportWeekly(string $username)
+    {
+        Gate::allowIf(function (User $auth) {
+            return in_array($auth->role, ['teacher', 'counselor']);
+        });
+        $user = User::with(['room', 'counselor', 'mentor'])->whereUsername($username)->first();
+        $query = MoodRecord::where('user_id', $user->id)->whereBetween('recorded', [
+            now()->startOfWeek(),
+            now()->endOfWeek(),
+        ]);
+
+        $moods = $query->orderBy('recorded')->get();
+        $recap = $moods
+            ->groupBy('status')
+            ->map(fn ($items) => $items->count());
+        $secure = ($recap['neutral'] ?? 0) + ($recap['happy'] ?? 0);
+        $insecure = ($recap['angry'] ?? 0) + ($recap['sad'] ?? 0);
+        $mean = $secure > $insecure ? 'secure' : 'insecure';
+        $stud = [
+            'name' => $user->name,
+            'room' => 'Kelas '.$user->room->level.' '.$user->room->name,
+            'counselor' => $user->counselor->name,
+            'mentor' => $user->mentor->name,
+            'identifier' => $user->identifier,
+        ];
+        $data = compact('recap', 'mean', 'moods', 'stud');
+        $fileName = 'exports/student-mood-'.now()->format('Ymd_His').'.xlsx';
+        Excel::store(new StudentMoodExport($data), $fileName, 'public');
+
+        $url = Storage::disk('public')->url($fileName);
+
+        return response()->json(['url' => $url]);
+    }
+
+    /**
+     * Export user mood monthly
+     *
+     * Mendapatkan laporan excel mood siswa bulan ini. bisa diakses oleh wali dan BK
+     */
+    #[Group('Export')]
+    public function exportMonthly(string $username)
+    {
+        Gate::allowIf(function (User $auth) {
+            return in_array($auth->role, ['teacher', 'counselor']);
+        });
+        $user = User::with(['room', 'counselor', 'mentor'])->whereUsername($username)->first();
+        $query = MoodRecord::where('user_id', $user->id)->whereMonth('recorded', now()->month)
+            ->whereYear('recorded', now()->year);
+
+        $moods = $query->orderBy('recorded')->get();
+        $recap = $moods
+            ->groupBy('status')
+            ->map(fn ($items) => $items->count());
+        $secure = ($recap['neutral'] ?? 0) + ($recap['happy'] ?? 0);
+        $insecure = ($recap['angry'] ?? 0) + ($recap['sad'] ?? 0);
+        $mean = $secure > $insecure ? 'secure' : 'insecure';
+        $stud = [
+            'name' => $user->name,
+            'room' => 'Kelas '.$user->room->level.' '.$user->room->name,
+            'counselor' => $user->counselor->name,
+            'mentor' => $user->mentor->name,
+            'identifier' => $user->identifier,
+        ];
+        $data = compact('recap', 'mean', 'moods', 'stud');
+        $fileName = 'exports/student-mood-monthly'.now()->format('Ymd_His').'.xlsx';
+        Excel::store(new StudentMoodExport($data), $fileName, 'public');
+
+        $url = Storage::disk('public')->url($fileName);
+
+        return response()->json(['url' => $url]);
     }
 }
