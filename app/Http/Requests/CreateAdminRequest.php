@@ -27,7 +27,7 @@ class CreateAdminRequest extends FormRequest
             'name' => 'required|string',
             'phone' => 'required|digits_between:10,13|unique:users,phone',
             'username' => 'required|unique:users,username',
-            'identifier' => 'required|digits:18|unique:users,identifier',
+            'identifier' => 'required|digits:16|unique:users,identifier',
             'school_id' => 'required|integer|exists:schools,id',
             'password' => [
                 'required',
