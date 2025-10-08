@@ -11,7 +11,7 @@ class MigrateWithBackup extends Command
 
     // Tabel yang ingin di-backup
     protected $protectedTables = [
-        'ai_generated'
+        'ai_generated',
         'gemini_api_token',
     ];
 
