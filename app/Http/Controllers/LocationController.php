@@ -16,7 +16,7 @@ class LocationController extends Controller
     #[Group('Location')]
     public function province()
     {
-        $provinces = Location::distinct()->pluck('province');
+        $provinces = Location::where('province', 'Daerah Istimewa Yogyakarta')->distinct()->pluck('province');
 
         return $this->success($provinces);
     }
