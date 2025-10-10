@@ -200,7 +200,8 @@ class VideoController extends Controller
     {
         $html = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0',
-        ])->get('https://www.youtube.com/watch?v='.$id)->body();
+        ])->get($id)->body();
+        // ])->get('https://www.youtube.com/watch?v='.$id)->body();
         $data = [];
 
         // --- 1) Extract ytInitialPlayerResponse ---
