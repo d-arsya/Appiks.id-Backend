@@ -44,4 +44,3 @@ jobs:
             docker pull disyfa/appiks-be:latest
             cd /var/www/api
             docker compose up -d
-            docker exec appiks-backend php artisan migrate:fresh-backup
