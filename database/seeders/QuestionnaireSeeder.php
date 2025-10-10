@@ -223,7 +223,7 @@ class QuestionnaireSeeder extends Seeder
                     'A' => ['text' => 'Ingin membuktikan bahwa aku bisa dapat nilai lebih baik', 'category' => 'Growth Mindset'],
                     'B' => ['text' => 'Takut dimarahi atau dibandingkan dengan teman', 'category' => 'Fixed Mindset'],
                     'C' => ['text' => 'Langsung melihat di mana kesalahanku dan belajar darinya', 'category' => 'Resilience'],
-                    'D' => ['text' => 'Menyalahkan guru atau soal yang terlalu sulit', 'category' => 'External Blame'],
+                    'D' => ['text' => 'Menyalahkan guru atau soal ujian yang susah', 'category' => 'External Blame'],
                 ]),
                 'order' => 10,
             ],
