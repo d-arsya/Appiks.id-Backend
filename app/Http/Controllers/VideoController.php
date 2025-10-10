@@ -208,7 +208,7 @@ class VideoController extends Controller
             'Accept-Language' => 'en-US,en;q=0.9',
             'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         ])->get('https://www.youtube.com/watch?v='.$id)->body();
-        file_put_contents('/storage/youtube-debug.html', $html);
+        file_put_contents(storage_path('app/youtube-debug.html'), $html);
 
         // ])->get($id)->body();
         $data = [];
