@@ -140,7 +140,11 @@ class VideoController extends Controller
         $data = $request->all();
         $tags = $data['tags'];
         unset($data['tags']);
-        $video = Video::create(array_merge($data, $meta));
+        try {
+            $video = Video::create(array_merge($data, $meta));
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), 400, array_merge($data, $meta));
+        }
         $video->tags()->sync($tags);
         $res = Video::with(['school', 'tags'])->where('id', $video->id)->first();
 
