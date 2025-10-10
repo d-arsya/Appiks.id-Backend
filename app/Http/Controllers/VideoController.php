@@ -204,14 +204,19 @@ class VideoController extends Controller
     private function getVideoDetail($id)
     {
         $html = Http::withHeaders([
-            'User-Agent' => 'Mozilla/5.0',
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.90 Safari/537.36',
+            'Accept-Language' => 'en-US,en;q=0.9',
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         ])->get('https://www.youtube.com/watch?v='.$id)->body();
+        file_put_contents('/storage/youtube-debug.html', $html);
+
         // ])->get($id)->body();
         $data = [];
-        Log::info(substr($html, 0, 1000));
+        Log::info(substr($html, 0, 5000));
         // --- 1) Extract ytInitialPlayerResponse ---
         if (preg_match('/ytInitialPlayerResponse\s*=\s*({.*?});/s', $html, $m)) {
             $player = json_decode($m[1], true);
+            Log::info($m[1]);
 
             if (! empty($player['videoDetails'])) {
                 $video = $player['videoDetails'];
