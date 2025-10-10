@@ -60,5 +60,7 @@ class CompressThumbnail extends Command
         } catch (\Throwable $th) {
             $this->info('Tidak ada gambar yang dikompres');
         }
+
+        return 0;
     }
 }
