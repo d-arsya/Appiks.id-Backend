@@ -206,7 +206,7 @@ class UserController extends Controller
             $data = $request->validate([
                 'username' => "string|unique:users,username,{$user->id}",
                 'phone' => "string|digits_between:10,15|unique:users,phone,{$user->id}",
-                'identifier' => "string|digits:18|unique:users,identifier,{$user->id}",
+                'identifier' => "string|digits_between:16,25|unique:users,identifier,{$user->id}",
                 'name' => 'string',
                 'password' => [
                     'nullable',
@@ -221,7 +221,7 @@ class UserController extends Controller
             $data = $request->validate([
                 'username' => "string|unique:users,username,{$user->id}",
                 'phone' => "string|digits_between:10,15|unique:users,phone,{$user->id}",
-                'identifier' => "string|digits:18|unique:users,identifier,{$user->id}",
+                'identifier' => "string|digits_between:16,25|unique:users,identifier,{$user->id}",
                 'name' => 'string',
                 'school_id' => 'integer|exists:schools,id',
                 'password' => [
