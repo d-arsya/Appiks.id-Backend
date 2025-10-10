@@ -12,6 +12,7 @@
         "php": "^8.2",
         "dedoc/scramble": "^0.12.31",
         "google-gemini-php/laravel": "^2.0",
+        "google/apiclient": "^2.18",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",

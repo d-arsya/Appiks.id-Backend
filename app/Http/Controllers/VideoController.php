@@ -8,13 +8,16 @@ use App\Models\Article;
 use App\Models\Tag;
 use App\Models\Video;
 use App\Traits\ApiResponder;
+use DateInterval;
 use Dedoc\Scramble\Attributes\Group;
+use Exception;
+use Google\Client;
+use Google\Service\YouTube;
+use Google_Service_Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class VideoController extends Controller
 {
@@ -201,38 +204,46 @@ class VideoController extends Controller
         return $this->success(new VideoResource($video));
     }
 
-    private function getVideoDetail($id)
+    public function getVideoDetail($videoId)
     {
-        $html = Http::withHeaders([
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.90 Safari/537.36',
-            'Accept-Language' => 'en-US,en;q=0.9',
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        ])->get('https://www.youtube.com/watch?v='.$id)->body();
-        file_put_contents(storage_path('app/youtube-debug.html'), $html);
+        $client = new Client;
+        $client->setDeveloperKey(env('YOUTUBE_API_KEY'));
 
-        // ])->get($id)->body();
-        $data = [];
-        Log::info(substr($html, 0, 5000));
-        // --- 1) Extract ytInitialPlayerResponse ---
-        if (preg_match('/ytInitialPlayerResponse\s*=\s*({.*?});/s', $html, $m)) {
-            $player = json_decode($m[1], true);
-            Log::info($m[1]);
+        $youtube = new YouTube($client);
 
-            if (! empty($player['videoDetails'])) {
-                $video = $player['videoDetails'];
-                $data = [
-                    'video_id' => $video['videoId'] ?? null,
-                    'title' => $video['title'] ?? null,
-                    'description' => $video['shortDescription'] ?? null,
-                    'thumbnail' => end($video['thumbnail']['thumbnails'])['url'] ?? [],
-                    'duration' => gmdate(($video['lengthSeconds'] >= 3600 ? 'H:i:s' : 'i:s'), $video['lengthSeconds']) ?? null, // in seconds
-                    'channel' => $video['author'] ?? null,
-                    'views' => $video['viewCount'] ?? null,
-                ];
+        try {
+            $response = $youtube->videos->listVideos('snippet,contentDetails,statistics', [
+                'id' => $videoId,
+            ]);
+
+            if (count($response->getItems()) === 0) {
+                return null;
             }
-        }
-        Log::info($data);
 
-        return $data;
+            $video = $response->getItems()[0];
+
+            $snippet = $video->getSnippet();
+            $contentDetails = $video->getContentDetails();
+            $statistics = $video->getStatistics();
+
+            $duration = new DateInterval($contentDetails->getDuration());
+            $seconds = ($duration->h * 3600) + ($duration->i * 60) + $duration->s;
+
+            return [
+                'video_id' => $videoId,
+                'title' => $snippet->getTitle(),
+                'description' => $snippet->getDescription(),
+                'thumbnail' => $snippet->getThumbnails()->getDefault()->getUrl(),
+                'duration' => gmdate(($seconds >= 3600 ? 'H:i:s' : 'i:s'), $seconds),
+                'channel' => $snippet->getChannelTitle(),
+                'views' => $statistics->getViewCount(),
+            ];
+        } catch (Google_Service_Exception $e) {
+            return $this->error('YouTube API Error: '.$e->getMessage());
+
+            return null;
+        } catch (Exception $e) {
+            return $this->error('General Error: '.$e->getMessage());
+        }
     }
 }
