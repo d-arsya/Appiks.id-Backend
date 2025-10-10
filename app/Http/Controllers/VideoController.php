@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class VideoController extends Controller
 {
@@ -200,10 +201,10 @@ class VideoController extends Controller
     {
         $html = Http::withHeaders([
             'User-Agent' => 'Mozilla/5.0',
-        ])->get($id)->body();
-        // ])->get('https://www.youtube.com/watch?v='.$id)->body();
+        ])->get('https://www.youtube.com/watch?v='.$id)->body();
+        // ])->get($id)->body();
         $data = [];
-
+        Log::info(substr($html, 0, 1000));
         // --- 1) Extract ytInitialPlayerResponse ---
         if (preg_match('/ytInitialPlayerResponse\s*=\s*({.*?});/s', $html, $m)) {
             $player = json_decode($m[1], true);
@@ -221,6 +222,7 @@ class VideoController extends Controller
                 ];
             }
         }
+        Log::info($data);
 
         return $data;
     }
