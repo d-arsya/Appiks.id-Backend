@@ -10,6 +10,7 @@ use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\SelfHelpController;
 use App\Http\Controllers\SharingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -30,6 +31,11 @@ Route::controller(LocationController::class)->group(function () {
     Route::get('village/{district}', 'village')->name('village');
 });
 Route::middleware('auth:api')->group(function () {
+    Route::get('self-help/{type}/{user:username}', [SelfHelpController::class, 'getByType'])->whereIn('type', ['Daily Journaling', 'Gratitude Journal', 'Grounding Technique', 'Sensory Relaxation']);
+    Route::post('self-help/daily-journaling', [SelfHelpController::class, 'createDaily']);
+    Route::post('self-help/gratitude-journaling', [SelfHelpController::class, 'createGratitude']);
+    Route::post('self-help/grounding-technique', [SelfHelpController::class, 'createGrounding']);
+    Route::post('self-help/sensory-relaxation', [SelfHelpController::class, 'createSensory']);
     Route::get('me', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('room-student-count', [RoomController::class, 'roomStudentCount']);

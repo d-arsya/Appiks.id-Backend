@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // AiGenerated::class,
             // GeminiApi::class,
-            LocationSeeder::class,
+            // LocationSeeder::class,
             SchoolSeeder::class,
             RoomSeeder::class,
             UserSeeder::class,
@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             ReportSeeder::class,
             SharingSeeder::class,
             QuotesSeeder::class,
+            SelfHelpSeeder::class,
         ]);
     }
 }
