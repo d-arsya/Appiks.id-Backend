@@ -67,6 +67,7 @@ Route::middleware('auth:api')->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::post('user/bulk', 'bulkCreate');
         Route::post('user/admin', 'adminCreate');
+        Route::post('user/student', 'studentCreate');
         Route::patch('profile', 'profile');
         Route::patch('edit-user/{user:username}', 'edit');
         Route::patch('edit-profile', 'editProfile');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAdminRequest;
+use App\Http\Requests\CreateStudentRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UserFirstLoginRequest;
 use App\Http\Resources\UserResource;
@@ -284,5 +285,16 @@ class UserController extends Controller
 
             return $this->success(compact(['data', 'count']));
         }
+    }
+
+    /**
+     * Create single student
+     */
+    #[Group('User')]
+    public function studentCreate(CreateStudentRequest $request)
+    {
+        $student = User::create($request->all());
+
+        return $this->created(new UserResource($student));
     }
 }
