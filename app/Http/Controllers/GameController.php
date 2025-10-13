@@ -63,19 +63,28 @@ class GameController extends Controller
     public function claim(Request $request)
     {
         Gate::allowIf(function (User $user) {
-            return $user->role == 'student';
+            return $user->role === 'student';
         });
+
         $user = Auth::user();
-        if ($user->cloud->last_in == now()->toDateString()) {
-            return $this->error('You have check in today');
-        }
         $cirrus = $user->cloud;
+        if ($cirrus->last_in && $cirrus->last_in == now()->toDateString()) {
+            return $this->error('You have checked in today.');
+        }
         $request->validate([
             'water' => 'required|integer',
         ]);
+        $yesterday = now()->subDay()->toDateString();
+
+        if ($cirrus->last_in === $yesterday) {
+            $newStreak = $cirrus->streak == 7 ? 7 : $cirrus->streak + 1;
+        } else {
+            $newStreak = 1;
+        }
         $cirrus->update([
             'water' => $cirrus->water + $request->water,
-            'streak' => $cirrus->streak + ($cirrus->streak == 7 ? 0 : 1),
+            'streak' => $newStreak,
+            'last_in' => now()->toDateString(),
         ]);
 
         return $this->success(new CloudResource($cirrus));
