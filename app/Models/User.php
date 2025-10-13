@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -90,5 +89,10 @@ class User extends Authenticatable implements JWTSubject
     public function lastmoodres()
     {
         return $this->hasOne(MoodRecord::class)->whereRecorded(now()->toDateString());
+    }
+
+    public function cloud()
+    {
+        return $this->hasOne(Cloud::class);
     }
 }

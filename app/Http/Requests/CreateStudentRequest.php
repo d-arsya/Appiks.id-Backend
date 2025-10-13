@@ -48,6 +48,7 @@ class CreateStudentRequest extends FormRequest
             'school_id' => Auth::user()->school_id,
             'verified' => false,
             'password' => Hash::make(config('app.default_password')),
+            'role' => 'student',
         ]);
     }
 }

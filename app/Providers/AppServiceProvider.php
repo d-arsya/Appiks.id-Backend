@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Cloud;
 use App\Models\User;
+use App\Observers\CloudObserver;
+use App\Observers\UserObserver;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -33,5 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('dashboard-data', function (User $user) {
             return $user->role != 'student';
         });
+        User::observe(UserObserver::class);
+        Cloud::observe(CloudObserver::class);
     }
 }
