@@ -37,30 +37,36 @@ class UsersImportSync implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-        logs()->info($rows);
+        logs()->info('Payload: '.$rows[0]);
         $users = [];
         foreach ($rows as $row) {
             if (empty($row['nisn']) || empty($row['nama'])) {
                 break;
             }
-            $users[] = [
-                'name' => $row['nama'],
-                'username' => $row['nisn'],
-                'identifier' => $row['nisn'],
-                'mentor_id' => $this->mentors[$row['nip_wali']],
-                'counselor_id' => $this->counselors[$row['nip_bk']],
-                'room_id' => $this->rooms[$row['kode_kelas']],
-                'school_id' => $this->schoolId,
-                'password' => $this->defaultPassword,
-                'role' => 'student',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+            try {
+                $users[] = [
+                    'name' => $row['nama'],
+                    'username' => $row['nisn'],
+                    'identifier' => $row['nisn'],
+                    'mentor_id' => $this->mentors[$row['nip_wali']],
+                    'counselor_id' => $this->counselors[$row['nip_bk']],
+                    'room_id' => $this->rooms[$row['kode_kelas']],
+                    'school_id' => $this->schoolId,
+                    'password' => $this->defaultPassword,
+                    'role' => 'student',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            } catch (\Throwable $th) {
+                logs()->error('Gagal menambahkan: '.$th->getMessage());
+                break;
+            }
         }
 
         DB::table('users')->insert($users);
         $nisnValues = collect($users)->pluck('identifier');
         $this->insertedUsers = User::whereIn('identifier', $nisnValues)->get();
+        logs()->info('Total ditambahkan: '.count($this->insertedUsers));
     }
 
     public function getInsertedUsers()
