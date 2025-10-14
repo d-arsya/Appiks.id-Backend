@@ -40,13 +40,13 @@ class UsersImportSync implements ToCollection, WithHeadingRow
         logs()->info($rows);
         $users = [];
         foreach ($rows as $row) {
-            if (empty($row['nis']) || empty($row['nama'])) {
+            if (empty($row['nisn']) || empty($row['nama'])) {
                 break;
             }
             $users[] = [
                 'name' => $row['nama'],
-                'username' => $row['nis'],
-                'identifier' => $row['nis'],
+                'username' => $row['nisn'],
+                'identifier' => $row['nisn'],
                 'mentor_id' => $this->mentors[$row['nip_wali']],
                 'counselor_id' => $this->counselors[$row['nip_bk']],
                 'room_id' => $this->rooms[$row['kode_kelas']],
@@ -59,8 +59,8 @@ class UsersImportSync implements ToCollection, WithHeadingRow
         }
 
         DB::table('users')->insert($users);
-        $nisValues = collect($users)->pluck('identifier');
-        $this->insertedUsers = User::whereIn('identifier', $nisValues)->get();
+        $nisnValues = collect($users)->pluck('identifier');
+        $this->insertedUsers = User::whereIn('identifier', $nisnValues)->get();
     }
 
     public function getInsertedUsers()

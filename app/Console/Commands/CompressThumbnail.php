@@ -9,34 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class CompressThumbnail extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'compress:thumbnail';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Compress image thumbnails';
 
-    /**
-     * Execute the console command.
-     */
+    protected $signature = 'compress:thumbnail';
+
     public function handle()
     {
         try {
-            // code...
             $disk = Storage::disk('public');
             $ap = env('APP_URL');
             $article = Article::where('thumbnail', 'like', "$ap%")
                 ->where('thumbnail', 'not like', '%_com.webp')
                 ->first();
             if ($article == null) {
-                return true;
+                return 0;
             }
             $filepath = str_replace("$ap/storage/", '', $article->thumbnail);
             if ($disk->exists($filepath)) {
@@ -56,9 +42,9 @@ class CompressThumbnail extends Command
                 $article->save();
                 $disk->delete($filepath);
             }
-            $this->info('Ada gambar yang dikompres');
+            $this->info('Sukses compress gambar');
         } catch (\Throwable $th) {
-            $this->info('Tidak ada gambar yang dikompres');
+            $this->info('Gagal compress gambar'.$th->getMessage());
         }
 
         return 0;

@@ -43,13 +43,13 @@ class UsersImport implements ShouldQueue, ToCollection, WithChunkReading, WithCo
     {
         $users = [];
         foreach ($rows as $row) {
-            if (empty($row['nis']) || empty($row['nama'])) {
+            if (empty($row['nisn']) || empty($row['nama'])) {
                 break;
             }
             $users[] = [
                 'name' => $row['nama'],
-                'username' => $row['nis'],
-                'identifier' => $row['nis'],
+                'username' => $row['nisn'],
+                'identifier' => $row['nisn'],
                 'mentor_id' => $this->mentors[$row['nip_wali']],
                 'counselor_id' => $this->counselors[$row['nip_bk']],
                 'room_id' => $this->rooms[$row['kode_kelas']],
