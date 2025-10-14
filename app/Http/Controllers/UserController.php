@@ -282,8 +282,11 @@ class UserController extends Controller
             Excel::import($import, $file);
             $data = $import->getInsertedUsers();
             $count = $data->count();
-
-            return $this->success(compact(['data', 'count']));
+            if ($count) {
+                return $this->success(compact(['data', 'count']));
+            } else {
+                return $this->error('File bermasalah');
+            }
         }
     }
 
