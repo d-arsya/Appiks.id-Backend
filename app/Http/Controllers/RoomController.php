@@ -65,6 +65,34 @@ class RoomController extends Controller
     }
 
     /**
+     * Get all level on school
+     */
+    #[Group('Room')]
+    public function getLevel()
+    {
+        Gate::authorize('dashboard-data');
+        $levels = Room::select('level')
+            ->distinct()
+            ->pluck('level');
+
+        return $this->success($levels);
+    }
+
+    /**
+     * Get room by level on school
+     *
+     * @param  string  $level  X | XI | XII
+     */
+    #[Group('Room')]
+    public function byLevel(string $level)
+    {
+        Gate::authorize('dashboard-data');
+        $rooms = Room::whereLevel($level)->get();
+
+        return $this->success($rooms);
+    }
+
+    /**
      * Get all rooms of the school
      *
      * Digunakan untuk mendapatkan kelas dari suatu sekolah. Hanya bisa diakses oleh Super Admin

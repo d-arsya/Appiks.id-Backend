@@ -96,6 +96,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('buy', 'buy');
         Route::post('claim', 'claim');
     });
+    Route::get('room/level', [RoomController::class, 'getLevel']);
+    Route::get('room/level/{level}', [RoomController::class, 'byLevel'])->whereIn('level', ['X', 'XI', 'XII']);
     Route::apiResource('room', RoomController::class)->only(['index', 'store', 'update', 'destroy', 'show']);
     Route::apiResource('video', VideoController::class)->except(['show']);
     Route::apiResource('articles', ArticleController::class)->except(['show', 'update']);
