@@ -71,7 +71,7 @@ class RoomController extends Controller
     public function getLevel()
     {
         Gate::authorize('dashboard-data');
-        $levels = Room::select('level')
+        $levels = Room::where('school_id', Auth::user()->school_id)->select('level')
             ->distinct()
             ->pluck('level');
 
@@ -87,7 +87,7 @@ class RoomController extends Controller
     public function byLevel(string $level)
     {
         Gate::authorize('dashboard-data');
-        $rooms = Room::whereLevel($level)->get();
+        $rooms = Room::where('school_id', Auth::user()->school_id)->whereLevel($level)->get();
 
         return $this->success($rooms);
     }
