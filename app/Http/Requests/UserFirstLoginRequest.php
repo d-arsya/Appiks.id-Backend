@@ -50,6 +50,6 @@ class UserFirstLoginRequest extends FormRequest
 
     protected function passedValidation()
     {
-        $this->merge(['verified' => true, 'password' => Hash::make($this->password)]);
+        $this->merge(['verified' => true, 'password' => Hash::make($this->password), 'username' => strtolower($this->username)]);
     }
 }
