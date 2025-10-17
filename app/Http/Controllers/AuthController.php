@@ -23,7 +23,7 @@ class AuthController extends Controller
     public function login(UserLoginRequest $request)
     {
         $credentials = $request->validated();
-        $user = User::with(['school', 'room', 'mentor'])->where('username', $credentials['username'])->first();
+        $user = User::with(['school', 'room', 'mentor'])->where('username', strtolower($credentials['username']))->first();
         if (! $user) {
             return $this->error('Unauthorized', 401, null);
         }
