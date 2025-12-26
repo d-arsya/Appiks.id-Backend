@@ -4,6 +4,10 @@ ENV SERVER_NAME=":80"
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . /app 
 
 RUN install-php-extensions \
@@ -25,3 +29,7 @@ COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 
 RUN composer install
 RUN php artisan storage:link || true
+
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
