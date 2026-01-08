@@ -12,4 +12,4 @@ Route::redirect('/', 'docs');
 //     return 'reset success';
 // });
 Scramble::registerUiRoute('docs');
-Scramble::registerJsonSpecificationRoute('api.json');
+Scramble::registerJsonSpecificationRoute('api/docs.json');
